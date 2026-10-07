@@ -120,6 +120,27 @@ def test_say_i_love_you(client: TestClient) -> None:
     assert step["sign_id"] == "ILY" and step["pose"]["middle"] == 1.0
 
 
+def test_say_hello(client: TestClient) -> None:
+    body = client.post("/api/say", json={"text": "Hello!"}).json()
+    assert [i["id"] for i in body["gloss"]["items"]] == ["HELLO"]
+    assert body["steps"] == 2
+    assert wait_done(client)[-1]["ok"] is True
+
+
+def test_library_file_edits_apply_without_restart(client: TestClient, library_path: Path) -> None:
+    import os
+
+    assert client.post("/api/say", json={"text": "howdy"}).json()["gloss"]["items"][0]["type"] != "sign"
+    wait_done(client)
+    text = library_path.read_text(encoding="utf-8").replace('"hi", "hey"', '"hi", "hey", "howdy"')
+    library_path.write_text(text, encoding="utf-8")
+    st = library_path.stat()
+    os.utime(library_path, ns=(st.st_atime_ns, st.st_mtime_ns + 1_000_000))
+    body = client.post("/api/say", json={"text": "howdy"}).json()
+    assert [i["id"] for i in body["gloss"]["items"]] == ["HELLO"]
+    wait_done(client)
+
+
 def test_say_code_is_so_cool(client: TestClient) -> None:
     body = client.post("/api/say", json={"text": "code is so cool"}).json()
     items = body["gloss"]["items"]

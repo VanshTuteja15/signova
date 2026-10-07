@@ -146,6 +146,7 @@ class Library:
         self.hand = hand
         self.path = path
         self._lock = threading.Lock()
+        self._mtime_ns = self._file_mtime()
 
     # ------------------------------------------------------------------ loading
     @classmethod
@@ -159,7 +160,33 @@ class Library:
 
     def reload(self) -> None:
         if self.path is not None:
+            mtime = self._file_mtime()
             self.data = parse_library(load_yaml(self.path), self.path.name)
+            self._mtime_ns = mtime
+
+    def _file_mtime(self) -> int | None:
+        try:
+            return self.path.stat().st_mtime_ns if self.path is not None else None
+        except OSError:
+            return None
+
+    def reload_if_changed(self) -> bool:
+        """Reload when the YAML file was edited on disk (e.g. by hand) since it was last read.
+
+        Returns True if the library was reloaded. If the edited file is invalid, the current
+        library stays in use and the validation error is raised for the caller to report.
+        """
+        if self.path is None:
+            return False
+        mtime = self._file_mtime()
+        if mtime is None or mtime == self._mtime_ns:
+            return False
+        with self._lock:
+            try:
+                self.data = parse_library(load_yaml(self.path), self.path.name)
+            finally:
+                self._mtime_ns = mtime  # don't retry a broken file on every request
+        return True
 
     # ------------------------------------------------------------------ queries
     @property
@@ -359,6 +386,7 @@ class Library:
         if self.path.exists():
             shutil.copy2(self.path, self.path.with_suffix(self.path.suffix + ".bak"))
         os.replace(tmp, self.path)
+        self._mtime_ns = self._file_mtime()
 
 
 def parse_library(raw: object, source: str = "library") -> LibraryData:

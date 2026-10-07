@@ -277,7 +277,22 @@ class Signova:
             await self.performer.cancel("server shutting down")
         await self.transports.close()
 
+    def refresh_library(self) -> None:
+        """Pick up edits to signs/library.yaml made outside the app, without a restart."""
+        try:
+            if self.library.reload_if_changed():
+                log.info("library.yaml changed on disk; reloaded")
+                self.bus.publish("status", state="library", detail="Sign library reloaded from disk")
+        except Exception as exc:
+            log.warning("library.yaml changed but is invalid: %s", exc)
+            self.bus.publish(
+                "error",
+                source="library",
+                message=f"signs/library.yaml has an error, still using the previous version: {exc}",
+            )
+
     def state(self) -> dict[str, Any]:
+        self.refresh_library()
         return {
             "version": __version__,
             "disclaimer": DISCLAIMER,
@@ -310,6 +325,7 @@ class Signova:
         stt_ms: float | None = None,
         speed: float | None = None,
     ) -> dict[str, Any]:
+        self.refresh_library()
         result = await self.gloss.gloss(text, engine)
         self.bus.publish("gloss", **result.model_dump())
         steps = self.sequencer.build(result.items, speed if speed is not None else self.speed)
@@ -428,6 +444,7 @@ def create_app(
             raise HTTPException(400, "The recording was empty. Hold the button while you speak.")
         if len(data) > MAX_AUDIO_BYTES:
             raise HTTPException(413, "The recording is too long (10 MB max).")
+        sig.refresh_library()  # the Vosk grammar is built from the library
         sig.bus.publish("status", state="transcribing", detail=f"Transcribing with {engine}...")
         try:
             text, stt_ms = await sig.speech.transcribe(data, engine)
@@ -497,6 +514,7 @@ def create_app(
     # ------------------------------------------------------------------ library
     @app.get("/api/library")
     async def get_library() -> list[dict[str, Any]]:
+        sig.refresh_library()
         return sig.library.to_api()
 
     @app.put("/api/library/{sign_id}")

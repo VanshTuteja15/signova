@@ -192,3 +192,30 @@ def test_in_memory_library_does_not_save(hand: HandConfig) -> None:
     lib = Library.from_dict({"signs": {"X": {"kind": "word", "tier": 1, "frames": [{"pose": {}}]}}}, hand)
     lib.upsert("Y2", {"kind": "word", "tier": 1, "frames": [{"pose": {}}]})
     assert "Y2" in lib.signs
+
+
+def test_reload_if_changed_picks_up_disk_edits(library: Library, library_path: Path) -> None:
+    import os
+
+    assert library.reload_if_changed() is False  # nothing changed yet
+    text = library_path.read_text(encoding="utf-8").replace('"hi", "hey"', '"hi", "hey", "howdy"')
+    library_path.write_text(text, encoding="utf-8")
+    st = library_path.stat()
+    os.utime(library_path, ns=(st.st_atime_ns, st.st_mtime_ns + 1_000_000))
+    assert library.reload_if_changed() is True
+    assert "howdy" in library.get("HELLO").english
+    assert library.reload_if_changed() is False
+
+
+def test_reload_if_changed_keeps_old_library_when_file_is_broken(
+    library: Library, library_path: Path
+) -> None:
+    import os
+
+    library_path.write_text("signs: [this is not a mapping", encoding="utf-8")
+    st = library_path.stat()
+    os.utime(library_path, ns=(st.st_atime_ns, st.st_mtime_ns + 1_000_000))
+    with pytest.raises(ConfigError):
+        library.reload_if_changed()
+    assert "ILY" in library.signs  # still the previous, valid library
+    assert library.reload_if_changed() is False  # a broken file is not retried every request
