@@ -1,0 +1,31 @@
+# Pinned versions verified to install and pass the test suite on Windows 11, Python 3.13 (2026-10-07).
+# Install with scripts\setup.ps1 (creates .venv), or: .venv\Scripts\python -m pip install -r requirements.txt
+
+# --- core (server, gloss, hardware) ---
+fastapi==0.142.2
+uvicorn[standard]==0.54.0
+pydantic==2.13.5
+PyYAML==6.0.3
+ruamel.yaml==0.19.1
+pyserial==3.5
+anthropic==1.11.0
+httpx==0.28.1
+python-multipart==0.0.32
+python-dotenv==1.2.4
+numpy==2.5.3
+
+# --- speech (offline) ---
+faster-whisper==1.2.1
+ctranslate2==4.8.2
+vosk==0.3.45
+av==19.0.1
+
+# --- development, tests, firmware tooling ---
+pytest==9.1.1
+pytest-asyncio==1.4.0
+pytest-cov==7.1.0
+ruff==0.16.10
+playwright==1.63.0
+websockets==17.2
+platformio==6.2.0
+pyttsx3==2.99; sys_platform == "win32"
