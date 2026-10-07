@@ -11,6 +11,8 @@ Order of matching (per MASTER_PROMPT 7.1):
 
 from __future__ import annotations
 
+import re
+
 from ..library import Library, tokenize
 from .types import GlossItem, GlossResult
 
@@ -67,8 +69,16 @@ def classify_word(word: str, library: Library, letters: set[str] | None = None) 
     return GlossItem(type="skip", word=word, reason=problem)
 
 
+_SPELLED = re.compile(r"(?<![A-Za-z])[A-Za-z](?:[-.]\s?[A-Za-z])+(?![A-Za-z])")
+
+
+def join_spelled_letters(text: str) -> str:
+    """Whisper writes spelled words as 'C-O-D-E' or 'C.O.D.E'; turn them back into 'CODE'."""
+    return _SPELLED.sub(lambda m: re.sub(r"[-.\s]", "", m.group(0)), text)
+
+
 def rule_gloss(text: str, library: Library) -> GlossResult:
-    tokens = tokenize(text)
+    tokens = tokenize(join_spelled_letters(text))
     phrases = library.phrase_map()
     longest = max((len(k) for k in phrases), default=1)
     letters = library.letters

@@ -6,13 +6,14 @@ Audio is processed in memory and never written to disk here.
 
 from __future__ import annotations
 
-import io
 import os
 import threading
 import time
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
+
+from .audio import SAMPLE_RATE, decode_to_float32
 
 DEFAULT_MODEL = "base.en"
 
@@ -91,8 +92,11 @@ class WhisperSTT:
         if not audio:
             return ""
         self.load()
+        samples = decode_to_float32(audio)
+        if samples.size < SAMPLE_RATE // 10:  # under 0.1 s: nothing to hear
+            return ""
         segments, _info = self._model.transcribe(
-            io.BytesIO(audio),
+            samples,
             language="en",
             beam_size=self.beam_size,
             vad_filter=True,

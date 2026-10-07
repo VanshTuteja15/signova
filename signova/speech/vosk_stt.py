@@ -8,7 +8,6 @@ Browser audio (webm/opus) is decoded to 16 kHz mono PCM with PyAV first.
 
 from __future__ import annotations
 
-import io
 import json
 import re
 import shutil
@@ -20,10 +19,10 @@ from pathlib import Path
 from typing import Any
 
 from ..library import Library
+from .audio import SAMPLE_RATE, decode_to_pcm16k
 
 DEFAULT_MODEL = "vosk-model-en-us-0.22-lgraph"
 MODEL_URL = f"https://alphacephei.com/vosk/models/{DEFAULT_MODEL}.zip"
-SAMPLE_RATE = 16000
 NUMBER_WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
 
 
@@ -68,24 +67,6 @@ def join_spelled_letters(text: str) -> str:
         if tok:
             out.append(tok)
     return " ".join(out)
-
-
-def decode_to_pcm16k(audio: bytes) -> bytes:
-    """Decode any PyAV-readable audio to 16 kHz mono signed 16-bit little-endian PCM."""
-    import av
-
-    out = bytearray()
-    with av.open(io.BytesIO(audio)) as container:
-        stream = next((s for s in container.streams if s.type == "audio"), None)
-        if stream is None:
-            raise ValueError("no audio stream found")
-        resampler = av.AudioResampler(format="s16", layout="mono", rate=SAMPLE_RATE)
-        for frame in container.decode(stream):
-            for rf in resampler.resample(frame):
-                out.extend(bytes(rf.planes[0])[: rf.samples * 2])
-        for rf in resampler.resample(None):
-            out.extend(bytes(rf.planes[0])[: rf.samples * 2])
-    return bytes(out)
 
 
 class VoskSTT:

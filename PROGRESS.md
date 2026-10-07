@@ -33,4 +33,15 @@ Re-read this file when resuming.
   /api/eval/export), WebSocket, evaluation sessions (answers hidden until the end; eval runs mask sign ids
   in events and pose ids), speech managers (whisper lazy, vosk grammar), CLI. TestClient covers every
   endpoint; headless e2e test runs real uvicorn + websockets.
-- Next: M7 dashboard.
+- **M7 done**: dashboard (vanilla ES modules, vendored three.js r170 = last single-file module build, system
+  fonts so it works offline). Playwright (installed Chrome via `channel="chrome"`) drives every tab, signs
+  sentences, creates a sign in Pose Studio and uses it, calibrates through the emulator, runs a 5-sign
+  evaluation (80% shown), checks for console errors, and writes `docs/screenshots/*.png`.
+- **M8 done**: models downloaded with `signova download-models` (Vosk lgraph 130.6 MB, Whisper base.en).
+  Found a real incompatibility: faster-whisper 1.2.1 calls `av.open(..., metadata_errors=...)`, removed in
+  PyAV 15+. Fixed by decoding with PyAV ourselves (`signova/speech/audio.py`) and passing float32 samples.
+  Offline TTS (pyttsx3 / SAPI "David") -> webm/opus -> real models: Whisper "I love you." / "Code is so
+  cool!" / "3"; Vosk grammar "i love you" / "three" and free-form speech rejected (by design). Whisper
+  writes spelled words as "C-O-D-E": the rule gloss now joins those back into one fingerspelled word.
+  Vosk heard spelled "C. O. D. E." as "cod" (imperfect; noted for HANDOFF).
+- Next: M9 firmware.
