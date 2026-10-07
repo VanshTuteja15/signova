@@ -1,0 +1,8 @@
+# Keep LF in the working tree for everything (Python, YAML, C++, JS, docs) ...
+* text=auto eol=lf
+# ... except Windows PowerShell scripts, which are happiest with CRLF.
+*.ps1 text eol=crlf
+*.pdf binary
+*.png binary
+*.gif binary
+*.wav binary
