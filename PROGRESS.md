@@ -44,4 +44,13 @@ Re-read this file when resuming.
   cool!" / "3"; Vosk grammar "i love you" / "three" and free-form speech rejected (by design). Whisper
   writes spelled words as "C-O-D-E": the rule gloss now joins those back into one fingerspelled word.
   Vosk heard spelled "C. O. D. E." as "cod" (imperfect; noted for HANDOFF).
-- Next: M9 firmware.
+- **M9 done**: firmware; 19 native tests pass (MinGW g++ 4.9.2, ArduinoJson 7.4.3); `pio run -e esp32dev`
+  and `esp32dev_feetech` build with no warnings in src (RAM 7.3%, flash 24.2%).
+- **M10 (mostly done)**: scripts (setup/run/run_sim_demo), pinned requirements, all docs, metrics/gloss-eval/bench
+  CLI. First clean-clone run of setup.ps1 FAILED: `.gitignore` pattern `data/` also excluded
+  `tests/data/sentences.yaml`. Fixed (anchored `/data/`, `/models/`) in commit 9952f7e. Clean clone NOT yet re-run.
+- **M11 done**: optional extras (signova/handpose.py + tools/capture_pose.py, tools/asl_lex_candidates.py, tests).
+- **Session stopped here (usage limit).** Remaining:
+  1. Delete `D:\signova_check`, re-clone, re-run `scripts\setup.ps1` and confirm it ends green.
+  2. Run the full suite + ruff + Playwright once more; re-check every Definition of Done item.
+  3. Write `MORNING_REPORT.md` (not written yet).
