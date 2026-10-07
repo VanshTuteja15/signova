@@ -1,0 +1,50 @@
+# Representative English sentences and the expected RULE-BASED gloss on the default hand.
+#
+# Notation: ID = library sign, FS:WORD = fingerspelled, -word = dropped (ASL doesn't sign it),
+# ?word = skipped (pointing pronoun, missing letters, too long, or no number sign).
+# Default-hand letters: A B C D E F I J L O S W Y (U/V need a spread joint).
+#
+# These double as the reference set for the gloss-accuracy metric in docs/EVALUATION.md
+# (the Claude engine is compared against hand-written references, with this rule output
+# as the baseline).
+
+- {text: "I love you", gloss: [ILY]}
+- {text: "Love you", gloss: [ILY]}
+- {text: "ILY", gloss: [ILY]}
+- {text: "Code is so cool", gloss: ["FS:CODE", "-is", "FS:SO", "FS:COOL"]}
+- {text: "No, I have three", gloss: ["NO", "?i", "?have", "3"]}
+- {text: "Four or five", gloss: ["4", "?or", "5"]}
+- {text: "The wild idea is bold", gloss: ["-the", "FS:WILD", "FS:IDEA", "-is", "FS:BOLD"]}
+- {text: "One two three four five", gloss: ["1", "2", "3", "4", "5"]}
+- {text: "1 2 3 4 5", gloss: ["1", "2", "3", "4", "5"]}
+- {text: "I have 10 dollars", gloss: ["?i", "?have", "?10", "?dollars"]}
+- {text: "She is a bold leader", gloss: ["?she", "-is", "-a", "FS:BOLD", "?leader"]}
+- {text: "We sail", gloss: ["?we", "FS:SAIL"]}
+- {text: "A cold sea", gloss: ["-a", "FS:COLD", "FS:SEA"]}
+- {text: "Do you see Bill?", gloss: ["-do", "?you", "FS:SEE", "FS:BILL"]}
+- {text: "Nope", gloss: ["NO"]}
+- {text: "It was a loss", gloss: ["?it", "-was", "-a", "FS:LOSS"]}
+- {text: "Wow, a big deal!", gloss: ["FS:WOW", "-a", "?big", "FS:DEAL"]}
+- {text: "Did they call Joel", gloss: ["-did", "?they", "FS:CALL", "FS:JOEL"]}
+- {text: "Fix it", gloss: ["?fix", "?it"]}
+- {text: "Coffee is life", gloss: ["FS:COFFEE", "-is", "FS:LIFE"]}
+- {text: "Supercalifragilistic", gloss: ["?supercalifragilistic"]}
+- {text: "Sail away", gloss: ["FS:SAIL", "FS:AWAY"]}
+- {text: "I love you, Ellis", gloss: ["ILY", "FS:ELLIS"]}
+- {text: "Five dollars", gloss: ["5", "?dollars"]}
+- {text: "Be bold", gloss: ["-be", "FS:BOLD"]}
+- {text: "Are you a fool?", gloss: ["-are", "?you", "-a", "FS:FOOL"]}
+- {text: "My dad is ill", gloss: ["?my", "FS:DAD", "-is", "FS:ILL"]}
+- {text: "Our ideas were sold", gloss: ["?our", "FS:IDEAS", "-were", "FS:SOLD"]}
+- {text: "Hello", gloss: ["?hello"]}
+- {text: "Lisa is so wise", gloss: ["FS:LISA", "-is", "FS:SO", "FS:WISE"]}
+- {text: "Disclosable", gloss: ["?disclosable"]}
+- {text: "Jade is five", gloss: ["FS:JADE", "-is", "5"]}
+- {text: "Been to Oslo", gloss: ["-been", "-to", "FS:OSLO"]}
+- {text: "Him and her", gloss: ["?him", "?and", "?her"]}
+- {text: "Do does did", gloss: ["-do", "-does", "-did"]}
+- {text: "Seal of a deal", gloss: ["FS:SEAL", "-of", "-a", "FS:DEAL"]}
+- {text: "I am so sad. I love you", gloss: ["?i", "-am", "FS:SO", "FS:SAD", "ILY"]}
+- {text: "Me, you and them", gloss: ["?me", "?you", "?and", "?them"]}
+- {text: "Your idea", gloss: ["?your", "FS:IDEA"]}
+- {text: "He fell", gloss: ["?he", "FS:FELL"]}

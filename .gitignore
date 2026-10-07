@@ -15,8 +15,8 @@ htmlcov/
 .env
 
 # Local data: models, recordings, evaluation CSVs, emulator calibration, logs
-models/
-data/
+/models/
+/data/
 
 # Library backups written by the dashboard
 *.bak
