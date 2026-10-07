@@ -50,7 +50,8 @@ Re-read this file when resuming.
   CLI. First clean-clone run of setup.ps1 FAILED: `.gitignore` pattern `data/` also excluded
   `tests/data/sentences.yaml`. Fixed (anchored `/data/`, `/models/`) in commit 9952f7e. Clean clone NOT yet re-run.
 - **M11 done**: optional extras (signova/handpose.py + tools/capture_pose.py, tools/asl_lex_candidates.py, tests).
-- **Session stopped here (usage limit).** Remaining:
-  1. Delete `D:\signova_check`, re-clone, re-run `scripts\setup.ps1` and confirm it ends green.
-  2. Run the full suite + ruff + Playwright once more; re-check every Definition of Done item.
-  3. Write `MORNING_REPORT.md` (not written yet).
+- Session paused at a usage limit, then resumed.
+- Deleting `D:\signova_check` was blocked by a safety hook, so the clean-clone check used a new folder:
+  `git clone D:\Signova D:\signova_check2` + `scripts\setup.ps1` -> **262 passed, 3 skipped** (model tests), exit 0.
+- Main folder: **265 passed**, coverage 94%, ruff + format clean. Real `signova serve --sim` smoke test over
+  HTTP: ILY and "code is so cool" correct. All Definition of Done items checked; `MORNING_REPORT.md` written.
