@@ -25,4 +25,12 @@ Re-read this file when resuming.
   speed 0.5-2.0, frame overrides), performer (cancellable task, exactly one `done` per run, latency,
   `data/logs/runs.csv` with numbers only - never the transcript text).
 - Note: a local "GateGuard" hook blocks the first Write of every new file; I state the facts and retry.
-- Next: M5 emulator + serial transport.
+- **M5 done**: pure-Python ESP32 emulator (min-jerk 100 Hz, speed limit, supersede, stop/relax, watchdog,
+  JSON calibration, 4 error codes; errors also carry `cmd`/`id` so the laptop can route them) and the serial
+  transport (reader thread -> asyncio, heartbeat, 3 missed pongs or serial error -> auto-reconnect, joint
+  mismatch blocks poses but not calibration). Tested end-to-end through `EmulatorSerial` (pyserial-like).
+- **M6 done**: FastAPI server (all endpoints in MASTER_PROMPT 7.5 + /api/settings, /api/eval/repeat,
+  /api/eval/export), WebSocket, evaluation sessions (answers hidden until the end; eval runs mask sign ids
+  in events and pose ids), speech managers (whisper lazy, vosk grammar), CLI. TestClient covers every
+  endpoint; headless e2e test runs real uvicorn + websockets.
+- Next: M7 dashboard.

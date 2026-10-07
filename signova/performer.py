@@ -50,6 +50,7 @@ class RunMeta:
     origin: float = field(default_factory=time.perf_counter)
     stt_ms: float | None = None
     gloss_ms: float | None = None
+    mask: bool = False  # evaluation: hide sign ids in events and pose ids so nothing gives the answer away
 
 
 class Performer:
@@ -178,6 +179,8 @@ class Performer:
                 self.current_step = step
                 payload = step.to_dict()
                 payload["pose"] = dict(zip(self.hand.joint_names, step.pose_vector, strict=True))
+                if meta.mask:
+                    payload.update(sign_id="?", label="?", context="evaluation")
                 self.bus.publish("step", run_id=run_id, total=len(steps), **payload)
                 if first_pose_ms is None:
                     first_pose_ms = (time.perf_counter() - meta.origin) * 1000
@@ -192,7 +195,7 @@ class Performer:
                         **{"median_ms": self.latency_stats()["median_ms"]},
                     )
                 await self.transport.send_pose(
-                    self._pose_id(step.sign_id),
+                    self._pose_id("EVAL" if meta.mask else step.sign_id),
                     step.pose_vector,
                     step.move_ms,
                     timeout_s=(step.move_ms + extra) / 1000,
