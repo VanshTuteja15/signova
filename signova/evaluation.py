@@ -240,3 +240,64 @@ class EvalSession:
             )
         self.saved_paths = {"trials": str(trials_path), "summary": str(summary_path)}
         return self.saved_paths
+
+
+# ---------------------------------------------------------------------------- report metrics
+def percentile(values: list[float], pct: float) -> float | None:
+    if not values:
+        return None
+    vals = sorted(values)
+    k = (len(vals) - 1) * pct / 100
+    lo, hi = int(k), min(int(k) + 1, len(vals) - 1)
+    return round(vals[lo] + (vals[hi] - vals[lo]) * (k - lo), 1)
+
+
+def latency_report(runs_csv: Path) -> dict[str, Any]:
+    """Median / p90 'speech end -> first pose' latency from data/logs/runs.csv, per source."""
+    if not runs_csv.exists():
+        return {"runs": 0, "by_source": {}}
+    by_source: dict[str, list[float]] = {}
+    total = 0
+    with runs_csv.open(encoding="utf-8") as fh:
+        for row in csv.DictReader(fh):
+            total += 1
+            if row.get("ok") != "True" or not row.get("first_pose_ms"):
+                continue
+            by_source.setdefault(row.get("source") or "?", []).append(float(row["first_pose_ms"]))
+    out: dict[str, Any] = {"runs": total, "by_source": {}}
+    for src, vals in by_source.items():
+        out["by_source"][src] = {
+            "count": len(vals),
+            "median_ms": percentile(vals, 50),
+            "p90_ms": percentile(vals, 90),
+            "max_ms": round(max(vals), 1),
+        }
+    return out
+
+
+def gloss_scores(predicted: list[str], reference: list[str]) -> dict[str, Any]:
+    """Exact sequence match plus multiset precision / recall / F1 over gloss tokens (short notation)."""
+    from collections import Counter
+
+    p, r = Counter(predicted), Counter(reference)
+    overlap = sum((p & r).values())
+    precision = overlap / sum(p.values()) if p else (1.0 if not r else 0.0)
+    recall = overlap / sum(r.values()) if r else (1.0 if not p else 0.0)
+    f1 = 2 * precision * recall / (precision + recall) if precision + recall else 0.0
+    return {"exact": predicted == reference, "precision": precision, "recall": recall, "f1": f1}
+
+
+def summarize_gloss_eval(rows: list[dict[str, Any]]) -> dict[str, Any]:
+    """rows: [{text, reference, predicted, rejected, fallback, latency_ms}] -> aggregate metrics."""
+    if not rows:
+        return {"sentences": 0}
+    scores = [gloss_scores(r["predicted"], r["reference"]) for r in rows]
+    lat = [float(r.get("latency_ms") or 0) for r in rows]
+    return {
+        "sentences": len(rows),
+        "exact_pct": round(100 * sum(s["exact"] for s in scores) / len(rows), 1),
+        "mean_f1": round(sum(s["f1"] for s in scores) / len(rows), 3),
+        "invented_signs_rejected": sum(int(r.get("rejected") or 0) for r in rows),
+        "fallbacks": sum(bool(r.get("fallback")) for r in rows),
+        "median_latency_ms": percentile(lat, 50),
+    }
