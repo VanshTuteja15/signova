@@ -1,0 +1,239 @@
+# SIGNOVA sign library.
+#
+# Every joint value is normalised: 0.0 = open / neutral, 1.0 = fully closed / rotated.
+# Joints missing from a frame's pose fall back to `rest`. No servo angles live here.
+#
+# ALL POSES ARE DRAFTS. They are rough approximations made for testing the pipeline and
+# must be checked by a fluent ASL signer before anyone relies on them (reference:
+# Dr. Bill Vicars' fingerspelling pages at lifeprint.com). Mark a sign as validated in
+# Pose Studio, which records the reviewer and date.
+#
+# Fields: kind (word | letter | number), tier (1 must-have, 2 should-have, 3 stretch),
+# english (phrases the rule-based gloss matches), requires (joints the hand must have),
+# frames (one or more poses with optional hold_ms / move_ms).
+#
+# Note: 4 and B share a handshape on this hand because there is no finger-spread joint.
+
+version: 1
+
+rest: {thumb: 0.15, thumb_rot: 0.2, index: 0.15, middle: 0.15, ring: 0.18, pinky: 0.2, wrist: 0.5, spread_index_middle: 0.0, wrist_flex: 0.5}
+
+signs:
+  # ---------------------------------------------------------------- numbers (tier 1)
+  "1":
+    kind: number
+    tier: 1
+    english: ["one", "1"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Index up, thumb holds the other fingers down"
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  "2":
+    kind: number
+    tier: 1
+    english: ["two", "2"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Index and middle up"
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  "3":
+    kind: number
+    tier: 1
+    english: ["three", "3"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "ASL 3 uses thumb, index and middle"
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  "4":
+    kind: number
+    tier: 1
+    english: ["four", "4"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Four fingers up, thumb across the palm. Same handshape as B here (no finger spread)"
+    frames:
+      - pose: {thumb: 0.8, thumb_rot: 0.95, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+  "5":
+    kind: number
+    tier: 1
+    english: ["five", "5"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Open hand"
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+
+  # ------------------------------------------------------------------ words (tier 1)
+  ILY:
+    kind: word
+    tier: 1
+    english: ["i love you", "love you", "ily"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Thumb, index, pinky extended"
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 1.0, ring: 1.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 800
+
+  # ---------------------------------------------------------------- letters (tier 1)
+  A:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Fist, thumb along the side of the index"
+    frames:
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  B:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Flat hand, thumb across the palm. Same handshape as 4 here"
+    frames:
+      - pose: {thumb: 0.8, thumb_rot: 0.95, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+  C:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Curved C shape"
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.45, index: 0.45, middle: 0.45, ring: 0.45, pinky: 0.45, wrist: 0.5}
+  D:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Index up, other fingers curl to touch the thumb"
+    frames:
+      - pose: {thumb: 0.6, thumb_rot: 0.85, index: 0.0, middle: 0.72, ring: 0.75, pinky: 0.78, wrist: 0.5}
+  E:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Fingertips curled down onto the tucked thumb"
+    frames:
+      - pose: {thumb: 0.85, thumb_rot: 1.0, index: 0.8, middle: 0.8, ring: 0.8, pinky: 0.8, wrist: 0.5}
+  F:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Index and thumb touch, other three fingers up"
+    frames:
+      - pose: {thumb: 0.55, thumb_rot: 0.75, index: 0.72, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+  I:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Pinky up, fist"
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 1.0, middle: 1.0, ring: 1.0, pinky: 0.0, wrist: 0.5}
+  L:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Thumb and index make an L"
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  O:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "All fingertips meet the thumb"
+    frames:
+      - pose: {thumb: 0.5, thumb_rot: 0.7, index: 0.62, middle: 0.62, ring: 0.62, pinky: 0.62, wrist: 0.5}
+  S:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Fist, thumb across the front of the fingers"
+    frames:
+      - pose: {thumb: 0.75, thumb_rot: 1.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  W:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Index, middle, ring up; thumb holds the pinky"
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 0.0, middle: 0.0, ring: 0.0, pinky: 1.0, wrist: 0.5}
+  Y:
+    kind: letter
+    tier: 1
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Thumb and pinky out"
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 0.0, wrist: 0.5}
+
+  # ------------------------------------------------------------------- tier 2 motion
+  "NO":
+    kind: word
+    tier: 2
+    english: ["no", "nope"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Index and middle snap down onto the thumb, twice"
+    frames:
+      - pose: {thumb: 0.2, thumb_rot: 0.55, index: 0.15, middle: 0.15, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 220
+      - pose: {thumb: 0.5, thumb_rot: 0.8, index: 0.55, middle: 0.55, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 220
+      - pose: {thumb: 0.2, thumb_rot: 0.55, index: 0.15, middle: 0.15, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 220
+      - pose: {thumb: 0.5, thumb_rot: 0.8, index: 0.55, middle: 0.55, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 220
+
+  # ------------------------------------------------------- tier 3 (needs extra joints)
+  J:
+    kind: letter
+    tier: 3
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "I handshape, then the wrist turns to trace a J"
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 1.0, middle: 1.0, ring: 1.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 300
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 1.0, middle: 1.0, ring: 1.0, pinky: 0.0, wrist: 1.0}
+        hold_ms: 300
+  U:
+    kind: letter
+    tier: 3
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, spread_index_middle]
+    validated_by_signer: false
+    notes: "Index and middle up and together. Needs a spread joint to differ from V"
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5, spread_index_middle: 0.0}
+  V:
+    kind: letter
+    tier: 3
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, spread_index_middle]
+    validated_by_signer: false
+    notes: "Index and middle up and spread apart"
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5, spread_index_middle: 1.0}

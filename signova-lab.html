@@ -1,0 +1,457 @@
+<title>SIGNOVA Lab</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#EDF0F3; --panel:#FFFFFF; --panel-2:#F5F7F9; --ink:#15202B; --muted:#5B6875; --line:#D5DCE3;
+  --accent:#2F49D1; --accent-soft:rgba(47,73,209,.10); --live:#D9771A; --live-soft:rgba(217,119,26,.14);
+  --good:#2E7D55; --warn:#A8650F; --bad:#B23A3A;
+  --hand:#DCE2E9; --hand-edge:#15202B; --joint:#8A97A5;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, "Cascadia Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#0E141B; --panel:#161E27; --panel-2:#1B2530; --ink:#E4EAF0; --muted:#93A1AE; --line:#2A3542;
+    --accent:#8395FF; --accent-soft:rgba(131,149,255,.14); --live:#F5A445; --live-soft:rgba(245,164,69,.16);
+    --good:#5FC08F; --warn:#E0A84E; --bad:#F07C7C;
+    --hand:#3A4654; --hand-edge:#C9D3DD; --joint:#7C8B99;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#0E141B; --panel:#161E27; --panel-2:#1B2530; --ink:#E4EAF0; --muted:#93A1AE; --line:#2A3542;
+  --accent:#8395FF; --accent-soft:rgba(131,149,255,.14); --live:#F5A445; --live-soft:rgba(245,164,69,.16);
+  --good:#5FC08F; --warn:#E0A84E; --bad:#F07C7C;
+  --hand:#3A4654; --hand-edge:#C9D3DD; --joint:#7C8B99;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:24px 48px}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+header{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:12px 24px}
+h1{font-family:var(--display);font-weight:700;font-size:clamp(28px,4vw,40px);letter-spacing:-.01em;line-height:1;margin:0}
+h1 span{color:var(--accent)}
+.sub{color:var(--muted);margin:6px 0 0;max-width:62ch}
+.proto{font-family:var(--mono);font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 10px;white-space:nowrap}
+h2{font-family:var(--display);font-weight:600;font-size:17px;margin:0;text-wrap:balance}
+.label{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+
+/* pipeline */
+.pipe{display:grid;grid-template-columns:repeat(4,1fr);gap:0;background:var(--panel);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.stage{padding:12px 16px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:2px;position:relative}
+.stage:last-child{border-right:0}
+.stage b{font-family:var(--display);font-weight:600;font-size:15px}
+.stage small{color:var(--muted);font-size:12.5px}
+.stage::before{content:"";position:absolute;left:0;top:0;height:3px;width:100%;background:transparent;transition:background .2s}
+.stage[data-state="active"]::before{background:var(--live)}
+.stage[data-state="done"]::before{background:var(--accent)}
+.stage .n{font-family:var(--mono);font-size:11.5px;color:var(--muted)}
+
+.grid{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:20px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+
+textarea{width:100%;min-height:76px;resize:vertical;font:inherit;font-size:16px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+textarea:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.samples{display:flex;flex-wrap:wrap;gap:8px}
+.chipbtn{font:inherit;font-size:13px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px;cursor:pointer}
+.chipbtn:hover{border-color:var(--accent)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button.primary,button.ghost{font:inherit;font-weight:600;font-size:14px;border-radius:8px;padding:9px 16px;cursor:pointer;border:1px solid var(--accent)}
+button.primary{background:var(--accent);color:#fff}
+:root[data-theme="dark"] button.primary{color:#0E141B}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.primary{color:#0E141B}}
+button.ghost{background:transparent;color:var(--accent)}
+button:disabled{opacity:.45;cursor:not-allowed}
+.speed{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;margin-left:auto}
+select{font:inherit;font-size:13px;color:var(--ink);background:var(--panel-2);border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.note{font-size:13px;color:var(--muted);margin:0}
+.note.warn{color:var(--warn)}
+
+/* gloss */
+.gloss{display:flex;flex-wrap:wrap;gap:8px;min-height:34px}
+.tok{display:inline-flex;align-items:baseline;gap:6px;border-radius:6px;padding:4px 10px;font-family:var(--mono);font-size:13.5px;border:1px solid var(--line);background:var(--panel-2)}
+.tok small{font-family:var(--body);font-size:11.5px;color:var(--muted)}
+.tok.sign{border-color:var(--accent);background:var(--accent-soft)}
+.tok.fs{border-color:var(--accent);border-style:dashed}
+.tok.drop{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted)}
+.tok.skip{color:var(--warn);border-color:var(--warn)}
+.tok.now{outline:2px solid var(--live);outline-offset:1px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px;border:1px solid var(--line)}
+.why{font-size:13px;color:var(--muted);margin:0}
+
+/* serial */
+.serial{font-family:var(--mono);font-size:12.5px;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;height:180px;overflow:auto;white-space:pre;line-height:1.55}
+.serial .rx{color:var(--good)}
+.serial .tx{color:var(--ink)}
+.serial .sys{color:var(--muted)}
+
+/* hand */
+.stagehead{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.now-sign{font-family:var(--display);font-weight:700;font-size:44px;line-height:1;color:var(--ink);font-variant-numeric:tabular-nums}
+.now-sub{font-size:13px;color:var(--muted);text-align:right}
+.handbox{background:var(--panel-2);border:1px solid var(--line);border-radius:10px;display:flex;justify-content:center}
+.handbox svg{width:100%;max-width:380px;height:auto;display:block}
+.tele{display:grid;grid-template-columns:auto 1fr auto auto;gap:6px 12px;align-items:center;font-size:13px}
+.tele .nm{color:var(--muted)}
+.bar{height:8px;background:var(--panel-2);border:1px solid var(--line);border-radius:999px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px}
+.bar.moving i{background:var(--live)}
+.tele .v{font-family:var(--mono);font-variant-numeric:tabular-nums;text-align:right;min-width:3.2em}
+.tele .deg{font-family:var(--mono);font-variant-numeric:tabular-nums;color:var(--muted);text-align:right;min-width:3.6em}
+
+/* library */
+.lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:10px}
+.sign{font:inherit;text-align:left;background:var(--panel-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;display:flex;flex-direction:column;gap:2px;color:var(--ink)}
+.sign:hover{border-color:var(--accent)}
+.sign b{font-family:var(--display);font-size:22px;line-height:1.1}
+.sign span{font-size:12px;color:var(--muted)}
+.sign em{font-style:normal;white-space:nowrap;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.sign.t3 b{color:var(--muted)}
+.foot{font-size:12.5px;color:var(--muted);max-width:90ch}
+.foot strong{color:var(--ink);font-weight:600}
+
+@media (max-width:860px){.grid{grid-template-columns:1fr}.pipe{grid-template-columns:repeat(2,1fr)}.stage:nth-child(2){border-right:0}.stage:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+@media (prefers-reduced-motion:reduce){.stage::before{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>SIGN<span>OVA</span> Lab</h1>
+      <p class="sub">Type what someone says and watch it go through the pipeline: gloss, sequence, serial commands, and a simulated robotic hand.</p>
+    </div>
+    <span class="proto">browser prototype · no hardware attached</span>
+  </header>
+
+  <section class="pipe" aria-label="Pipeline stages">
+    <div class="stage" id="st-0"><span class="n">1 · input</span><b>Speech</b><small>Typed here; Whisper on the laptop</small></div>
+    <div class="stage" id="st-1"><span class="n">2 · AI</span><b>Gloss</b><small>English → supported signs</small></div>
+    <div class="stage" id="st-2"><span class="n">3 · sequencer</span><b>Poses</b><small>Keyframes → JSON lines</small></div>
+    <div class="stage" id="st-3"><span class="n">4 · motion</span><b>Hand</b><small>7 joints, simulated servos</small></div>
+  </section>
+
+  <div class="grid">
+    <div class="col">
+      <section class="card" aria-labelledby="in-h">
+        <div class="stagehead"><h2 id="in-h">What was said</h2><span class="label">English</span></div>
+        <textarea id="said" aria-label="Spoken sentence">I love you</textarea>
+        <div class="samples" id="samples"></div>
+        <div class="row">
+          <button class="primary" id="run">Sign it</button>
+          <button class="ghost" id="ai" hidden>Gloss with Claude</button>
+          <button class="ghost" id="stop" disabled>Stop</button>
+          <label class="speed" for="speed">Speed
+            <select id="speed"><option value="0.6">0.6×</option><option value="1" selected>1×</option><option value="1.6">1.6×</option></select>
+          </label>
+        </div>
+        <p class="note" id="mic-note">The microphone is blocked inside this page, so type instead. In the real build, faster-whisper turns speech into this text on the laptop.</p>
+      </section>
+
+      <section class="card" aria-labelledby="gl-h">
+        <div class="stagehead"><h2 id="gl-h">ASL-style gloss</h2><span class="label" id="gloss-mode">rule-based</span></div>
+        <div class="gloss" id="gloss" aria-live="polite"></div>
+        <p class="why" id="why"></p>
+        <div class="legend">
+          <span><i style="background:var(--accent-soft);border-color:var(--accent)"></i>sign in library</span>
+          <span><i style="border:1px dashed var(--accent)"></i>fingerspelled</span>
+          <span><i></i>dropped (ASL doesn't sign it)</span>
+          <span><i style="border-color:var(--warn)"></i>skipped (hand can't make it)</span>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="se-h">
+        <div class="stagehead"><h2 id="se-h">Serial to ESP32</h2><span class="label">USB · 1 JSON line per pose</span></div>
+        <div class="serial" id="serial" role="log" aria-label="Serial log"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card" aria-labelledby="hand-h">
+        <div class="stagehead">
+          <div><h2 id="hand-h">Robotic hand</h2><span class="label">right hand · palm to viewer</span></div>
+          <div><div class="now-sign" id="now">ILY</div><div class="now-sub" id="now-sub">I LOVE YOU</div></div>
+        </div>
+        <div class="handbox"><svg id="hand" viewBox="0 0 360 400" role="img" aria-label="Simulated robotic hand"></svg></div>
+        <div class="tele" id="tele"></div>
+        <p class="note">Servo angles use an example calibration (0.0 → 10°, 1.0 → 170°). The hardware team's calibration file replaces it.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="card" aria-labelledby="lib-h">
+    <div class="stagehead"><h2 id="lib-h">Sign library</h2><span class="label">tap to preview · all drafts until a fluent signer reviews them</span></div>
+    <div class="lib" id="lib"></div>
+    <p class="foot"><strong>Limits of this prototype.</strong> One hand, no finger spread, no facial expression or arm movement, so this is not ASL, only its handshapes. U and V look the same without a spread joint. Poses are rough approximations for testing the pipeline and must be checked by a fluent signer before anyone relies on them.</p>
+  </section>
+</div>
+
+<script>
+(() => {
+"use strict";
+const JOINTS = ["thumb","thumb_rot","index","middle","ring","pinky","wrist"];
+const NAMES = {thumb:"Thumb bend",thumb_rot:"Thumb across",index:"Index",middle:"Middle",ring:"Ring",pinky:"Pinky",wrist:"Wrist turn"};
+const P = (thumb,thumb_rot,index,middle,ring,pinky,wrist=0.5) => ({thumb,thumb_rot,index,middle,ring,pinky,wrist});
+const REST = P(0.15,0.2,0.15,0.15,0.18,0.2);
+
+// Draft poses: approximations for pipeline testing only.
+const LIB = {
+  "1":{tier:1,label:"one",frames:[P(.7,.9,0,1,1,1)]},
+  "2":{tier:1,label:"two",frames:[P(.7,.9,0,0,1,1)]},
+  "3":{tier:1,label:"three",frames:[P(0,0,0,0,1,1)]},
+  "4":{tier:1,label:"four",frames:[P(.8,.95,0,0,0,0)]},
+  "5":{tier:1,label:"five",frames:[P(0,0,0,0,0,0)]},
+  "ILY":{tier:1,label:"I love you",frames:[P(0,0,0,1,1,0)]},
+  "A":{tier:1,label:"letter",frames:[P(.05,.1,1,1,1,1)]},
+  "B":{tier:1,label:"letter",frames:[P(.8,.95,0,0,0,0)]},
+  "C":{tier:1,label:"letter",frames:[P(.35,.45,.45,.45,.45,.45)]},
+  "D":{tier:1,label:"letter",frames:[P(.6,.85,0,.72,.75,.78)]},
+  "E":{tier:1,label:"letter",frames:[P(.85,1,.8,.8,.8,.8)]},
+  "F":{tier:1,label:"letter",frames:[P(.55,.75,.72,0,0,0)]},
+  "I":{tier:1,label:"letter",frames:[P(.7,.95,1,1,1,0)]},
+  "L":{tier:1,label:"letter",frames:[P(0,0,0,1,1,1)]},
+  "O":{tier:1,label:"letter",frames:[P(.5,.7,.62,.62,.62,.62)]},
+  "S":{tier:1,label:"letter",frames:[P(.75,1,1,1,1,1)]},
+  "W":{tier:1,label:"letter",frames:[P(.7,.95,0,0,0,1)]},
+  "Y":{tier:1,label:"letter",frames:[P(0,0,1,1,1,0)]},
+  "NO":{tier:2,label:"fingers snap to thumb",frames:[P(.2,.55,.15,.15,1,1),P(.5,.8,.55,.55,1,1),P(.2,.55,.15,.15,1,1),P(.5,.8,.55,.55,1,1)],hold:220},
+  "J":{tier:3,label:"needs wrist",frames:[P(.7,.95,1,1,1,0,.5),P(.7,.95,1,1,1,0,1)],hold:300}
+};
+const LETTERS = new Set(["A","B","C","D","E","F","I","L","O","S","W","Y"]);
+const PHRASES = [[/\bi\s+love\s+you\b/g,"ILY"],[/\blove\s+you\b/g,"ILY"]];
+const WORDS = {no:"NO",nope:"NO",one:"1",two:"2",three:"3",four:"4",five:"5","1":"1","2":"2","3":"3","4":"4","5":"5",ily:"ILY"};
+const DROP = new Set(["a","an","the","is","am","are","was","were","be","been","to","of","do","does","did","it's","its"]);
+const POINTING = new Set(["i","me","my","you","your","he","she","they","we","him","her","them","our"]);
+const SAMPLES = ["I love you","No, I have three","Code is so cool","The wild idea is bold","Four or five"];
+
+const $ = id => document.getElementById(id);
+const said=$("said"), glossEl=$("gloss"), why=$("why"), serial=$("serial"), runBtn=$("run"), aiBtn=$("ai"), stopBtn=$("stop");
+
+// ---------- gloss (rule-based) ----------
+function ruleGloss(text){
+  let t = " " + text.toLowerCase().replace(/[^a-z0-9'\s]/g," ") + " ";
+  const marks = [];
+  PHRASES.forEach(([re,id]) => { t = t.replace(re, m => { marks.push({id,word:m.trim()}); return " §"+(marks.length-1)+" "; }); });
+  const items = [];
+  t.split(/\s+/).filter(Boolean).forEach(w => {
+    if (w.startsWith("§")) { const m = marks[+w.slice(1)]; items.push({type:"sign",id:m.id,word:m.word}); return; }
+    if (WORDS[w]) { items.push({type:"sign",id:WORDS[w],word:w}); return; }
+    if (DROP.has(w)) { items.push({type:"drop",word:w}); return; }
+    if (POINTING.has(w)) { items.push({type:"skip",word:w,reason:"pointing sign needs arm movement"}); return; }
+    const L = w.replace(/'/g,"").toUpperCase().split("");
+    const miss = [...new Set(L.filter(c => !LETTERS.has(c)))];
+    if (!miss.length && L.length <= 8) items.push({type:"fs",word:w});
+    else items.push({type:"skip",word:w,reason: miss.length ? "can't fingerspell "+miss.join(", ") : "too long to fingerspell"});
+  });
+  return {items, note:"Rule-based: phrase and number matching, drops articles and forms of \"be\", fingerspells words the hand can spell."};
+}
+
+// validator: the AI can only emit what the library supports
+function validate(items){
+  let rejected = 0;
+  const out = (Array.isArray(items)?items:[]).map(it => {
+    const type = String(it?.type||""), word = String(it?.word||it?.id||"").slice(0,40);
+    if (type==="sign"){ const id = String(it.id||"").toUpperCase(); if (LIB[id]) return {type,id,word}; rejected++; return {type:"skip",word,reason:"rejected: \""+id+"\" is not in the library"}; }
+    if (type==="fs"){ const L = word.replace(/[^a-z]/gi,"").toUpperCase().split(""); const miss=[...new Set(L.filter(c=>!LETTERS.has(c)))]; if (L.length && !miss.length) return {type,word}; rejected++; return {type:"skip",word,reason:"rejected: can't fingerspell "+(miss.join(", ")||"empty")}; }
+    if (type==="drop") return {type,word};
+    return {type:"skip",word,reason:String(it?.reason||"not supported").slice(0,80)};
+  });
+  return {items:out, rejected};
+}
+
+function renderGloss(g){
+  glossEl.textContent = "";
+  g.items.forEach((it,i) => {
+    const s = document.createElement("span");
+    s.className = "tok " + it.type; s.dataset.i = i;
+    if (it.type==="sign"){ s.textContent = it.id; s.title = "\""+it.word+"\""; }
+    else if (it.type==="fs"){ s.textContent = "FS:"+it.word.toUpperCase(); }
+    else { s.textContent = it.word; if (it.type==="skip") { const sm=document.createElement("small"); sm.textContent=it.reason; s.append(sm);} }
+    glossEl.append(s);
+  });
+  why.textContent = g.note || "";
+}
+
+// ---------- hand model ----------
+const svg = $("hand"), NS = "http://www.w3.org/2000/svg";
+const FINGERS = [
+  {k:"index", base:[1.45,4.0], len:[1.55,1.0,.8]},
+  {k:"middle",base:[.5,4.2],  len:[1.75,1.1,.85]},
+  {k:"ring",  base:[-.5,4.05],len:[1.6,1.0,.8]},
+  {k:"pinky", base:[-1.45,3.7],len:[1.2,.8,.7]}
+];
+const CURL = [85,100,70].map(d=>d*Math.PI/180);
+const THUMB_CURL = [18,55,60].map(d=>d*Math.PI/180);
+const norm = v => { const m=Math.hypot(...v)||1; return v.map(x=>x/m); };
+const add = (a,b,s=1) => a.map((x,i)=>x+b[i]*s);
+const dot = (a,b) => a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+function chain(base,d0,f,lens,angles,c){
+  const pts=[base]; let p=base, phi=0;
+  lens.forEach((L,i)=>{ phi+=c*angles[i]; const d=norm(add(d0.map(x=>x*Math.cos(phi)),f,Math.sin(phi))); p=add(p,d,L); pts.push(p); });
+  return pts;
+}
+function geometry(J){
+  const parts=[];
+  FINGERS.forEach(fg=>parts.push({k:fg.k,pts:chain([fg.base[0],fg.base[1],0],[0,1,0],[0,0,1],fg.len,CURL,J[fg.k]),w:.78}));
+  const ext=norm([.78,.62,0]), opp=norm([-.6,.5,.62]);
+  const d0=norm(ext.map((x,i)=>x*(1-J.thumb_rot)+opp[i]*J.thumb_rot));
+  let f=[-.75,-.25,.6]; f=norm(add(f,d0,-dot(f,d0)));
+  parts.push({k:"thumb",pts:chain([1.75,.9,0],d0,f,[1.35,1.05,.85],THUMB_CURL,J.thumb),w:.85});
+  const a=(J.wrist-.5)*140*Math.PI/180, ca=Math.cos(a), sa=Math.sin(a);
+  const rot=p=>[p[0]*ca+p[2]*sa,p[1],-p[0]*sa+p[2]*ca];
+  const palm=[[-1.95,.3,0],[1.95,.3,0],[2.1,2.2,0],[1.95,4.05,0],[.5,4.35,0],[-.5,4.2,0],[-1.95,3.8,0],[-2.05,1.2,0]].map(rot);
+  const arm=[[-1.45,-1.6,0],[1.45,-1.6,0],[1.6,.45,0],[-1.6,.45,0]].map(rot);
+  parts.forEach(p=>{p.pts=p.pts.map(rot); p.z=p.pts.slice(1).reduce((s,q)=>s+q[2],0)/(p.pts.length-1);});
+  return {palm,arm,parts};
+}
+const S=36, CX=180, CY=332;
+const pr = p => [CX+(p[0]+p[2]*.18)*S, CY-(p[1]-p[2]*.42)*S];
+const el = (n,a) => { const e=document.createElementNS(NS,n); for (const k in a) e.setAttribute(k,a[k]); return e; };
+let moving = new Set();
+function draw(J){
+  const g=geometry(J);
+  svg.textContent="";
+  svg.append(el("line",{x1:20,x2:340,y1:388,y2:388,stroke:"var(--line)","stroke-width":1}));
+  const poly=pts=>pts.map(p=>pr(p).map(v=>v.toFixed(1)).join(",")).join(" ");
+  svg.append(el("polygon",{points:poly(g.arm),fill:"var(--hand)",stroke:"var(--hand-edge)","stroke-width":1.4,"stroke-linejoin":"round",opacity:.85}));
+  const behind=g.parts.filter(p=>p.z<-.05), front=g.parts.filter(p=>p.z>=-.05).sort((a,b)=>a.z-b.z);
+  const finger=p=>{
+    const pts=p.pts.map(pr), hot=moving.has(p.k)||(p.k==="thumb"&&moving.has("thumb_rot"));
+    const d="M"+pts.map(q=>q[0].toFixed(1)+" "+q[1].toFixed(1)).join(" L");
+    svg.append(el("path",{d,fill:"none",stroke:hot?"var(--live)":"var(--hand-edge)","stroke-width":p.w*S+3,"stroke-linecap":"round","stroke-linejoin":"round"}));
+    svg.append(el("path",{d,fill:"none",stroke:"var(--hand)","stroke-width":p.w*S-1,"stroke-linecap":"round","stroke-linejoin":"round"}));
+    pts.slice(1,-1).forEach(q=>svg.append(el("circle",{cx:q[0].toFixed(1),cy:q[1].toFixed(1),r:3.2,fill:"var(--joint)"})));
+  };
+  behind.forEach(finger);
+  svg.append(el("polygon",{points:poly(g.palm),fill:"var(--hand)",stroke:"var(--hand-edge)","stroke-width":1.6,"stroke-linejoin":"round"}));
+  // PCA9685 board hint on the palm
+  const c=pr([0,2.1,0]); svg.append(el("rect",{x:(c[0]-22).toFixed(1),y:(c[1]-12).toFixed(1),width:44,height:24,rx:4,fill:"none",stroke:"var(--joint)","stroke-width":1,"stroke-dasharray":"3 3"}));
+  front.forEach(finger);
+}
+
+// ---------- telemetry ----------
+const tele=$("tele"), bars={};
+JOINTS.forEach(k=>{
+  const nm=document.createElement("span"); nm.className="nm"; nm.textContent=NAMES[k];
+  const b=document.createElement("div"); b.className="bar"; const i=document.createElement("i"); b.append(i);
+  const v=document.createElement("span"); v.className="v"; const dg=document.createElement("span"); dg.className="deg";
+  tele.append(nm,b,v,dg); bars[k]={b,i,v,dg};
+});
+function paintTele(J){
+  JOINTS.forEach(k=>{ const x=J[k]; bars[k].i.style.width=(x*100).toFixed(1)+"%"; bars[k].v.textContent=x.toFixed(2); bars[k].dg.textContent=Math.round(10+x*160)+"°"; bars[k].b.classList.toggle("moving",moving.has(k)); });
+}
+
+// ---------- motion ----------
+let J={...LIB.ILY.frames[0]}, runId=0;
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const speed = () => +$("speed").value;
+const sleep = (ms,id) => new Promise(r=>setTimeout(()=>r(id===runId),ms/speed()));
+function moveTo(T,ms,id){
+  return new Promise(res=>{
+    const A={...J}; moving=new Set(JOINTS.filter(k=>Math.abs(T[k]-A[k])>.02));
+    if (reduce){ J={...T}; moving.clear(); draw(J); paintTele(J); return res(id===runId); }
+    const t0=performance.now(), dur=ms/speed();
+    const step=now=>{
+      if (id!==runId){ moving.clear(); return res(false); }
+      const u=Math.min(1,(now-t0)/dur), e=u<.5?2*u*u:1-Math.pow(-2*u+2,2)/2;
+      JOINTS.forEach(k=>J[k]=A[k]+(T[k]-A[k])*e); draw(J); paintTele(J);
+      if (u<1) requestAnimationFrame(step); else { moving.clear(); draw(J); paintTele(J); res(true); }
+    };
+    requestAnimationFrame(step);
+  });
+}
+function log(cls,text){ const d=document.createElement("div"); d.className=cls; d.textContent=text; serial.append(d); while (serial.childNodes.length>60) serial.firstChild.remove(); serial.scrollTop=serial.scrollHeight; }
+function stage(n,state){ for(let i=0;i<4;i++){ const s=$("st-"+i); if (i<n) s.dataset.state="done"; else if (i===n) s.dataset.state=state||"active"; else delete s.dataset.state; } }
+function setNow(big,sub){ $("now").textContent=big; $("now-sub").textContent=sub; }
+
+async function perform(g){
+  const id=++runId; stopBtn.disabled=false;
+  const seq=[];
+  g.items.forEach((it,i)=>{
+    if (it.type==="sign") seq.push({i,id:it.id,sub:it.word.toUpperCase()});
+    if (it.type==="fs") it.word.toUpperCase().replace(/[^A-Z]/g,"").split("").forEach(ch=>seq.push({i,id:ch,sub:"FS:"+it.word.toUpperCase()}));
+  });
+  stage(2);
+  log("sys","# "+seq.length+" pose"+(seq.length===1?"":"s")+" queued");
+  if (!seq.length){ setNow("—","nothing the hand can sign"); stage(3,"done"); stopBtn.disabled=true; return; }
+  let prev=null;
+  for (const s of seq){
+    if (id!==runId) return;
+    glossEl.querySelectorAll(".tok").forEach(t=>t.classList.toggle("now",+t.dataset.i===s.i));
+    const sign=LIB[s.id];
+    if (prev===s.id){ if(!(await moveTo(REST,160,id))) return; }
+    setNow(s.id,s.sub); stage(3);
+    for (const fr of sign.frames){
+      const ms=300; log("tx",JSON.stringify({t:"pose",id:s.id,j:JOINTS.map(k=>+fr[k].toFixed(2)),ms}));
+      if(!(await moveTo(fr,ms,id))) return;
+      log("rx",JSON.stringify({ok:s.id}));
+      if(!(await sleep(sign.hold||(s.sub.startsWith("FS:")?520:800),id))) return;
+    }
+    prev=s.id;
+  }
+  if (id!==runId) return;
+  glossEl.querySelectorAll(".tok").forEach(t=>t.classList.remove("now"));
+  for (let i=0;i<4;i++) $("st-"+i).dataset.state="done";
+  stopBtn.disabled=true;
+}
+
+function runRules(){
+  runId++; stage(0); const g=ruleGloss(said.value); $("gloss-mode").textContent="rule-based";
+  renderGloss(g); stage(1,"done"); log("sys","# rules: \""+said.value.trim().slice(0,60)+"\""); perform(g);
+}
+runBtn.onclick=runRules;
+stopBtn.onclick=()=>{ runId++; moving.clear(); stopBtn.disabled=true; log("sys","# stopped"); moveTo(REST,300,runId).then(()=>setNow("REST","hand relaxed")); };
+said.addEventListener("keydown",e=>{ if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); runRules(); } });
+
+SAMPLES.forEach(s=>{ const b=document.createElement("button"); b.className="chipbtn"; b.type="button"; b.textContent=s; b.onclick=()=>{ said.value=s; runRules(); }; $("samples").append(b); });
+
+// library
+Object.entries(LIB).forEach(([k,v])=>{
+  const b=document.createElement("button"); b.type="button"; b.className="sign"+(v.tier===3?" t3":"");
+  const t=document.createElement("b"); t.textContent=k; const l=document.createElement("span"); l.textContent=v.label; const e=document.createElement("em"); e.textContent="Tier "+v.tier+" · draft";
+  b.append(t,l,e); b.onclick=()=>{ runId++; renderGloss({items:[{type:"sign",id:k,word:v.label}],note:"Library preview."}); log("sys","# preview "+k); perform({items:[{type:"sign",id:k,word:k}]}); };
+  $("lib").append(b);
+});
+
+// ---------- Claude gloss (optional) ----------
+(async()=>{
+  const sample = await (window.claude?.use?.("sample") ?? Promise.resolve(null)).catch(()=>null);
+  if (!sample) return;
+  aiBtn.hidden=false;
+  aiBtn.onclick=async()=>{
+    const text=said.value.trim(); if(!text) return;
+    runId++; aiBtn.disabled=true; runBtn.disabled=true; stage(1); $("gloss-mode").textContent="Claude";
+    glossEl.textContent=""; why.textContent="Thinking…";
+    const prompt=[
+      "You turn English into an ASL-style gloss for a one-handed robotic hand prototype.",
+      "Allowed sign IDs (use only these): "+Object.keys(LIB).join(", ")+". ILY means 'I love you'. NO means 'no'. 1-5 are numbers.",
+      "Fingerspellable letters: "+[...LETTERS].join(" ")+". A word may be fingerspelled only if every letter is in that list.",
+      "Rules: drop words ASL doesn't sign (articles, forms of 'be'). Use ASL-like order where it matters (time and topic first). Map a word to a sign only when it truly means that. Pronouns need pointing, which the hand can't do: mark them skip. Otherwise fingerspell if possible, else skip with a short reason. Never invent IDs.",
+      'Reply with only JSON: {"items":[{"type":"sign","id":"ILY","word":"I love you"},{"type":"fs","word":"code"},{"type":"drop","word":"is"},{"type":"skip","word":"hello","reason":"H not supported"}],"note":"one short sentence on the order you chose"}',
+      "Sentence: "+text.slice(0,400)
+    ].join("\n");
+    try{
+      const res=await sample.json(prompt,{modelTier:"quick"});
+      const v=validate(res?.items);
+      const g={items:v.items,note:(String(res?.note||"").slice(0,200))+(v.rejected?"  Validator rejected "+v.rejected+" item"+(v.rejected>1?"s":"")+" the library doesn't support.":"  Validator: every item is in the library.")};
+      renderGloss(g); stage(1,"done"); log("sys","# claude: \""+text.slice(0,60)+"\""); perform(g);
+    }catch(e){
+      why.textContent = e?.code==="not_granted"||e?.code==="sampling_disabled" ? "Claude isn't available on this page. The rule-based gloss still works." : e?.code==="rate_limited" ? "Too many requests right now. Try again in a minute, or use the rule-based gloss." : "Claude couldn't produce a gloss this time. Try again or use the rule-based gloss.";
+      if (e?.code==="not_granted"||e?.code==="sampling_disabled") aiBtn.hidden=true;
+      $("gloss-mode").textContent="rule-based";
+    }finally{ aiBtn.disabled=false; runBtn.disabled=false; }
+  };
+})();
+
+// initial state: ILY shown at rest
+const g0=ruleGloss(said.value); renderGloss(g0); draw(J); paintTele(J);
+for (let i=0;i<4;i++) $("st-"+i).dataset.state="done";
+log("sys","# SIGNOVA Lab ready · type a sentence and press Sign it");
+log("tx",JSON.stringify({t:"pose",id:"ILY",j:JOINTS.map(k=>J[k]),ms:300}));
+log("rx",JSON.stringify({ok:"ILY"}));
+})();
+</script>

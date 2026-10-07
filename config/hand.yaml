@@ -1,0 +1,40 @@
+# SIGNOVA hand configuration (default hand).
+#
+# Joint values everywhere in Python and in the serial protocol are normalised:
+#   0.0 = open / neutral, 1.0 = fully closed / fully rotated.
+# Servo microseconds only exist in the firmware calibration (see docs/CALIBRATION.md).
+#
+# The ORDER of `joints` is the order of the "j" array sent to the ESP32. It must match
+# JOINT_NAMES in firmware/signova_hand/include/config.h; the laptop checks this on connect.
+# Optional extra joints the software understands: spread_index_middle, wrist_flex.
+
+name: "SIGNOVA default hand (InMoov-style, PCA9685)"
+driver: pca9685            # pca9685 | feetech (informational; the firmware decides)
+
+joints:
+  - {name: thumb,     label: "Thumb bend"}
+  - {name: thumb_rot, label: "Thumb across palm"}
+  - {name: index,     label: "Index"}
+  - {name: middle,    label: "Middle"}
+  - {name: ring,      label: "Ring"}
+  - {name: pinky,     label: "Pinky"}
+  - {name: wrist,     label: "Wrist turn"}
+
+transport:
+  mode: sim                # sim | emulator | serial
+  port: null               # e.g. COM5; null = first port that looks like an ESP32 USB bridge
+  baud: 115200
+  heartbeat_s: 1.0         # ping interval; the firmware relaxes after 5 s of silence
+
+timing:
+  move_ms: 300             # transition into each pose
+  word_hold_ms: 800        # hold for a word / number sign
+  letter_hold_ms: 450      # hold for each fingerspelled letter
+  bounce_ms: 150           # doubled letters: move 15% toward rest and back
+  bounce_fraction: 0.15
+  speed: 1.0               # global speed factor 0.5 .. 2.0 (2.0 = twice as fast)
+  done_timeout_extra_ms: 1500
+
+limits:
+  full_range_ms: 250       # firmware speed limit: no joint goes 0 -> 1 faster than this
+  watchdog_ms: 5000        # firmware relaxes the hand after this much silence

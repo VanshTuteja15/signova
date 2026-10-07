@@ -1,0 +1,42 @@
+# Example: InMoov hand + forearm (https://inmoov.fr/hand-and-forarm/)
+# 5 finger bends (one servo each, braided-line tendons), a second thumb servo for
+# rotation across the palm, and wrist rotation (MG996 class). Driven by a PCA9685.
+#
+# PCA9685 channel suggestion (set in firmware config.h / calibration, not here):
+#   ch0 thumb, ch1 thumb_rot, ch2 index, ch3 middle, ch4 ring, ch5 pinky, ch6 wrist
+#
+# The InMoov hand has no finger spread, so U and V (which need spread_index_middle)
+# stay unavailable, and 4 / B share a handshape.
+#
+# To use: copy over config/hand.yaml, or set SIGNOVA_HAND_CONFIG=config/hand.inmoov.yaml
+
+name: "InMoov hand + forearm (PCA9685)"
+driver: pca9685
+
+joints:
+  - {name: thumb,     label: "Thumb bend"}
+  - {name: thumb_rot, label: "Thumb across palm"}
+  - {name: index,     label: "Index"}
+  - {name: middle,    label: "Middle"}
+  - {name: ring,      label: "Ring"}
+  - {name: pinky,     label: "Pinky"}
+  - {name: wrist,     label: "Wrist turn"}
+
+transport:
+  mode: serial
+  port: null
+  baud: 115200
+  heartbeat_s: 1.0
+
+timing:
+  move_ms: 350             # tendon hands are slower; give the servos a little more time
+  word_hold_ms: 900
+  letter_hold_ms: 500
+  bounce_ms: 150
+  bounce_fraction: 0.15
+  speed: 1.0
+  done_timeout_extra_ms: 1500
+
+limits:
+  full_range_ms: 300
+  watchdog_ms: 5000

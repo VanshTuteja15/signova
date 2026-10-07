@@ -1,0 +1,41 @@
+# Example: Pollen Robotics "Amazing Hand" style layout on Feetech serial-bus servos.
+#
+# NOTE: as modelled here the Amazing Hand has NO thumb (four fingers only), so every
+# sign that `requires` thumb or thumb_rot is automatically unavailable and greyed out in
+# the dashboard. This file mostly exists to show how availability follows the hardware.
+#
+# Each finger on the real hand uses two SCS0009 servos in a differential linkage; this
+# example maps one normalised joint to one servo. A proper finger "mixer" in firmware is
+# future work (see docs/HANDOFF.md). Feetech servo IDs are set in firmware config.h.
+#
+# To use: set SIGNOVA_HAND_CONFIG=config/hand.amazing.yaml and build the firmware with
+# DRIVER_FEETECH and the matching joint list.
+
+name: "Amazing Hand layout (Feetech SCS bus, no thumb)"
+driver: feetech
+
+joints:
+  - {name: index,               label: "Index"}
+  - {name: middle,              label: "Middle"}
+  - {name: ring,                label: "Ring"}
+  - {name: pinky,               label: "Pinky"}
+  - {name: spread_index_middle, label: "Index / middle spread"}
+
+transport:
+  mode: serial
+  port: null
+  baud: 115200
+  heartbeat_s: 1.0
+
+timing:
+  move_ms: 250
+  word_hold_ms: 800
+  letter_hold_ms: 450
+  bounce_ms: 150
+  bounce_fraction: 0.15
+  speed: 1.0
+  done_timeout_extra_ms: 1500
+
+limits:
+  full_range_ms: 200
+  watchdog_ms: 5000

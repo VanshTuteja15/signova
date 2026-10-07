@@ -1,0 +1,28 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Secrets
+.env
+
+# Local data: models, recordings, evaluation CSVs, emulator calibration, logs
+models/
+data/
+
+# Library backups written by the dashboard
+*.bak
+
+# Tooling caches kept inside the project folder
+.platformio/
+.playwright-browsers/
+firmware/signova_hand/.pio/
+test-results/
