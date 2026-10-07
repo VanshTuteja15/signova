@@ -257,7 +257,12 @@ class Library:
             "validated_on": sign.validated_on,
             "notes": sign.notes,
             "frames": [
-                {"pose": self.pose_dict(self.vector(f.pose)), "hold_ms": f.hold_ms, "move_ms": f.move_ms}
+                {
+                    "pose": self.pose_dict(self.vector(f.pose)),
+                    "raw": dict(f.pose),  # as stored, including joints this hand lacks
+                    "hold_ms": f.hold_ms,
+                    "move_ms": f.move_ms,
+                }
                 for f in sign.frames
             ],
         }

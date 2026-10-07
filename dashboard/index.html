@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIGNOVA Dashboard</title>
+<meta name="description" content="SIGNOVA research prototype: speech to ASL handshapes on a robotic hand.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%232F49D1'/%3E%3Cpath d='M9 26V12m4 14V7m4 19V6m4 20V9m4 17V15' stroke='white' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<script>
+  // Apply the saved theme before first paint (per-viewer convenience only).
+  try { const t = localStorage.getItem("signova-theme"); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
+</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top">
+  <div class="brand">
+    <h1>SIGN<span>OVA</span></h1>
+    <p class="tag" id="disclaimer">Research prototype. Shows ASL handshapes only. Not a translator or a replacement for interpreters.</p>
+  </div>
+  <div class="top-right">
+    <span class="pill" id="ws-pill" title="Connection to the SIGNOVA server"><i></i><span>server…</span></span>
+    <span class="pill" id="hand-pill" title="Hand transport"><i></i><span>hand…</span></span>
+    <span class="pill" id="ai-pill" title="Which engines are in use"><span>rules</span></span>
+    <button class="icon-btn" id="theme-btn" type="button" aria-label="Switch light or dark theme" title="Theme">◐</button>
+  </div>
+</header>
+
+<div class="banner" id="sim-banner" role="status" hidden>
+  <strong>Simulation mode.</strong> No hardware attached: the 3D hand shows exactly what the robotic hand would do.
+</div>
+
+<nav class="tabs" role="tablist" aria-label="Dashboard sections">
+  <button role="tab" id="tab-live" aria-controls="panel-live" aria-selected="true">Live</button>
+  <button role="tab" id="tab-studio" aria-controls="panel-studio" aria-selected="false" tabindex="-1">Pose Studio</button>
+  <button role="tab" id="tab-cal" aria-controls="panel-cal" aria-selected="false" tabindex="-1">Calibration</button>
+  <button role="tab" id="tab-eval" aria-controls="panel-eval" aria-selected="false" tabindex="-1">Evaluation</button>
+  <button role="tab" id="tab-lib" aria-controls="panel-lib" aria-selected="false" tabindex="-1">Library</button>
+  <button role="tab" id="tab-about" aria-controls="panel-about" aria-selected="false" tabindex="-1">About &amp; limits</button>
+</nav>
+
+<main id="main">
+<!-- ================================================================= LIVE -->
+<section class="panel" role="tabpanel" id="panel-live" aria-labelledby="tab-live">
+  <div class="grid-2">
+    <div class="col">
+      <section class="card" aria-labelledby="say-h">
+        <div class="card-head"><h2 id="say-h">Speak or type</h2><span class="label" id="privacy-note">audio processed in memory, not saved</span></div>
+        <div class="talk-row">
+          <button class="talk" id="talk-btn" type="button" aria-describedby="talk-help">
+            <span class="talk-dot" aria-hidden="true"></span><span id="talk-label">Hold to talk</span>
+          </button>
+          <div class="talk-side">
+            <p class="hint" id="talk-help">Hold the button (or the <kbd>Space</kbd> bar) while you speak, release to sign.</p>
+            <p class="status-line" id="talk-status" role="status" aria-live="polite">Ready.</p>
+          </div>
+        </div>
+        <div class="row">
+          <label class="field">Speech engine
+            <select id="stt-engine">
+              <option value="whisper">Whisper (faster-whisper, offline)</option>
+              <option value="vosk">Vosk grammar (demo-safe)</option>
+            </select>
+          </label>
+          <label class="field">Gloss engine
+            <select id="gloss-engine">
+              <option value="rules">Rules (offline)</option>
+              <option value="claude">Claude (cloud) + validator</option>
+            </select>
+          </label>
+          <label class="field">Speed
+            <select id="speed">
+              <option value="0.5">0.5×</option><option value="0.75">0.75×</option><option value="1" selected>1×</option>
+              <option value="1.5">1.5×</option><option value="2">2×</option>
+            </select>
+          </label>
+        </div>
+        <p class="note warn" id="claude-note" hidden></p>
+        <form class="say-form" id="say-form">
+          <label for="say-text" class="sr-only">Sentence to sign</label>
+          <input id="say-text" type="text" maxlength="500" autocomplete="off" placeholder="Type a sentence, e.g. I love you" value="I love you">
+          <button class="btn primary" type="submit" id="say-btn">Sign it</button>
+        </form>
+        <div class="chips" id="samples" aria-label="Example sentences"></div>
+        <label class="check"><input type="checkbox" id="save-rec"> Save recordings for testing (stored in <code>data/recordings/</code> on this laptop)</label>
+      </section>
+
+      <section class="card" aria-labelledby="gloss-h">
+        <div class="card-head"><h2 id="gloss-h">Transcript &amp; ASL-style gloss</h2><span class="label" id="gloss-engine-label">—</span></div>
+        <p class="transcript" id="transcript" aria-live="polite"><span class="muted">Nothing yet.</span></p>
+        <div class="gloss" id="gloss" aria-live="polite"></div>
+        <p class="note" id="gloss-note"></p>
+        <div class="legend" aria-hidden="true">
+          <span><i class="lg sign"></i>sign</span><span><i class="lg fs"></i>fingerspelled</span>
+          <span><i class="lg drop"></i>dropped (ASL doesn't sign it)</span><span><i class="lg skip"></i>skipped (hand can't make it)</span>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="log-h">
+        <div class="card-head"><h2 id="log-h">Serial &amp; event log</h2><button class="btn ghost small" type="button" id="log-clear">Clear</button></div>
+        <div class="log" id="log" role="log" aria-label="Serial and event log"></div>
+      </section>
+    </div>
+
+    <div class="col">
+      <section class="card hand-card" aria-labelledby="hand-h">
+        <div class="card-head">
+          <div><h2 id="hand-h">Robotic hand</h2><span class="label">right hand · palm toward viewer · drag to rotate</span></div>
+          <div class="now"><div class="now-sign" id="now-sign" aria-live="polite">—</div><div class="now-sub" id="now-sub">idle</div></div>
+        </div>
+        <div class="stage" id="live-stage" aria-label="3D view of the hand" role="img"></div>
+        <div class="row">
+          <button class="btn danger" type="button" id="stop-btn">Stop</button>
+          <button class="btn ghost" type="button" id="relax-btn">Relax</button>
+          <div class="latency" id="latency" aria-live="polite">latency —</div>
+        </div>
+        <div class="tele" id="tele" aria-label="Joint telemetry"></div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================= POSE STUDIO -->
+<section class="panel" role="tabpanel" id="panel-studio" aria-labelledby="tab-studio" hidden>
+  <div class="grid-2">
+    <div class="col">
+      <section class="card hand-card" aria-labelledby="studio-hand-h">
+        <div class="card-head"><h2 id="studio-hand-h">Pose preview</h2>
+          <label class="check"><input type="checkbox" id="studio-live"> Drive the hand live (~20 Hz)</label></div>
+        <div class="stage" id="studio-stage" role="img" aria-label="3D preview of the pose being edited"></div>
+        <div class="row">
+          <button class="btn ghost" type="button" id="studio-play">Play frames</button>
+          <button class="btn ghost" type="button" id="studio-rest">Reset to rest</button>
+          <button class="btn ghost" type="button" id="studio-perform">Perform saved sign</button>
+        </div>
+      </section>
+    </div>
+    <div class="col">
+      <section class="card" aria-labelledby="studio-h">
+        <div class="card-head"><h2 id="studio-h">Sign editor</h2>
+          <label class="field inline">Load
+            <select id="studio-load"><option value="">— new sign —</option></select>
+          </label>
+        </div>
+        <div class="form-grid">
+          <label class="field">Sign ID<input id="st-id" type="text" maxlength="16" placeholder="e.g. ROCK" autocomplete="off"></label>
+          <label class="field">Kind
+            <select id="st-kind"><option value="word">word</option><option value="letter">letter</option><option value="number">number</option></select>
+          </label>
+          <label class="field">Tier
+            <select id="st-tier"><option value="1">1 · must have</option><option value="2" selected>2 · should have</option><option value="3">3 · stretch</option></select>
+          </label>
+          <label class="field wide">English phrases (comma separated)<input id="st-english" type="text" placeholder="rock on, rock and roll" autocomplete="off"></label>
+          <label class="field wide">Notes<input id="st-notes" type="text" autocomplete="off"></label>
+        </div>
+        <div class="frames-bar">
+          <div class="frame-tabs" id="frame-tabs" role="tablist" aria-label="Frames"></div>
+          <button class="btn ghost small" type="button" id="frame-add">+ Frame</button>
+          <button class="btn ghost small" type="button" id="frame-dup">Duplicate</button>
+          <button class="btn ghost small" type="button" id="frame-del">Remove</button>
+        </div>
+        <div class="sliders" id="sliders"></div>
+        <div class="form-grid">
+          <label class="field">Hold (ms, blank = default)<input id="fr-hold" type="number" min="0" max="10000" step="10"></label>
+          <label class="field">Move (ms, blank = default)<input id="fr-move" type="number" min="0" max="5000" step="10"></label>
+        </div>
+        <fieldset class="validate">
+          <legend>Signer review</legend>
+          <label class="check"><input type="checkbox" id="st-validated"> Validated by a fluent signer</label>
+          <div class="form-grid">
+            <label class="field">Reviewer<input id="st-reviewer" type="text" maxlength="60" autocomplete="off"></label>
+            <label class="field">Date<input id="st-date" type="date"></label>
+          </div>
+        </fieldset>
+        <p class="note" id="st-requires">Required joints: worked out from the pose when you save.</p>
+        <div class="row">
+          <button class="btn primary" type="button" id="st-save">Save to library</button>
+          <button class="btn danger ghost" type="button" id="st-delete">Delete sign</button>
+          <span class="status-line" id="st-status" role="status" aria-live="polite"></span>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================= CALIBRATION -->
+<section class="panel" role="tabpanel" id="panel-cal" aria-labelledby="tab-cal" hidden>
+  <section class="card" aria-labelledby="conn-h">
+    <div class="card-head"><h2 id="conn-h">Connection</h2><span class="label" id="conn-detail">—</span></div>
+    <div class="row">
+      <label class="field">Mode
+        <select id="mode-select">
+          <option value="sim">Simulation (no hardware)</option>
+          <option value="emulator">ESP32 emulator (real protocol, no hardware)</option>
+          <option value="serial">ESP32 over USB</option>
+        </select>
+      </label>
+      <label class="field">Port<select id="port-select"><option value="">auto</option></select></label>
+      <button class="btn ghost small" type="button" id="ports-refresh">Refresh ports</button>
+      <button class="btn primary" type="button" id="connect-btn">Connect</button>
+    </div>
+    <p class="status-line" id="conn-status" role="status" aria-live="polite"></p>
+  </section>
+
+  <div class="warning-box" role="note">
+    <strong>Move slowly the first time.</strong> A wrong calibration can drive a servo past the hand's mechanical limit,
+    stall it, break a tendon or overheat it. Start in the middle (1500 µs), move one joint at a time in small steps,
+    keep a hand on the servo power switch, and never power servos from the ESP32's USB.
+  </div>
+
+  <section class="card" aria-labelledby="cal-h">
+    <div class="card-head"><h2 id="cal-h">Per-joint calibration</h2>
+      <div class="row tight"><span class="label" id="cal-units">PCA9685 · microseconds</span>
+      <button class="btn ghost small" type="button" id="cal-load">Load from hand</button></div></div>
+    <div class="cal-table" id="cal-table"></div>
+  </section>
+</section>
+
+<!-- ================================================================= EVALUATION -->
+<section class="panel" role="tabpanel" id="panel-eval" aria-labelledby="tab-eval" hidden>
+  <div class="grid-2">
+    <section class="card" aria-labelledby="eval-setup-h">
+      <div class="card-head"><h2 id="eval-setup-h">Session setup</h2></div>
+      <p class="note">The signer watches the <strong>hand</strong>, not this screen, and types what they saw. Answers are hidden until the end.</p>
+      <div class="form-grid">
+        <label class="field">Number of signs<input id="ev-count" type="number" min="1" max="200" value="10"></label>
+        <fieldset class="field"><legend>Tiers</legend>
+          <label class="check"><input type="checkbox" class="ev-tier" value="1" checked> 1</label>
+          <label class="check"><input type="checkbox" class="ev-tier" value="2"> 2</label>
+          <label class="check"><input type="checkbox" class="ev-tier" value="3"> 3</label>
+        </fieldset>
+        <label class="check"><input type="checkbox" id="ev-random" checked> Random order</label>
+        <label class="field wide">Participant label (optional; leave blank to stay anonymous)<input id="ev-participant" type="text" maxlength="40" autocomplete="off" placeholder="e.g. P1"></label>
+      </div>
+      <button class="btn primary" type="button" id="ev-start">Start session</button>
+    </section>
+
+    <section class="card" aria-labelledby="eval-run-h">
+      <div class="card-head"><h2 id="eval-run-h">Session</h2><span class="label" id="ev-progress">not started</span></div>
+      <div class="row">
+        <button class="btn primary" type="button" id="ev-next" disabled>Perform next sign</button>
+        <button class="btn ghost" type="button" id="ev-repeat" disabled>Repeat</button>
+      </div>
+      <form id="ev-form" class="eval-form">
+        <label class="field wide">What did the signer see?<input id="ev-guess" type="text" maxlength="80" autocomplete="off" disabled></label>
+        <fieldset class="field"><legend>Confidence (1 unsure – 5 certain)</legend>
+          <div class="conf" id="ev-conf">
+            <label><input type="radio" name="conf" value="1">1</label><label><input type="radio" name="conf" value="2">2</label>
+            <label><input type="radio" name="conf" value="3" checked>3</label><label><input type="radio" name="conf" value="4">4</label>
+            <label><input type="radio" name="conf" value="5">5</label>
+          </div>
+        </fieldset>
+        <button class="btn primary" type="submit" id="ev-answer" disabled>Record answer</button>
+      </form>
+      <p class="status-line" id="ev-status" role="status" aria-live="polite"></p>
+      <div id="ev-results" hidden>
+        <h3>Results</h3>
+        <p class="big-stat"><span id="ev-overall">—</span><small> overall recognition</small></p>
+        <table class="table" id="ev-table"><thead><tr><th scope="col">Sign</th><th scope="col">Shown</th><th scope="col">Correct</th><th scope="col">Recognition</th></tr></thead><tbody></tbody></table>
+        <div class="row">
+          <a class="btn ghost" id="ev-export-trials" href="/api/eval/export?kind=trials" download>Export trials CSV</a>
+          <a class="btn ghost" id="ev-export-summary" href="/api/eval/export?kind=summary" download>Export summary CSV</a>
+        </div>
+        <p class="note" id="ev-saved"></p>
+      </div>
+    </section>
+  </div>
+</section>
+
+<!-- ================================================================= LIBRARY -->
+<section class="panel" role="tabpanel" id="panel-lib" aria-labelledby="tab-lib" hidden>
+  <section class="card" aria-labelledby="lib-h">
+    <div class="card-head"><h2 id="lib-h">Sign library</h2>
+      <label class="field inline">Show
+        <select id="lib-filter"><option value="all">all signs</option><option value="available">available on this hand</option><option value="draft">drafts only</option></select>
+      </label>
+    </div>
+    <p class="note">Every sign is a draft until a fluent ASL signer checks it. Greyed-out signs need joints this hand does not have.</p>
+    <div class="lib" id="lib"></div>
+  </section>
+</section>
+
+<!-- ================================================================= ABOUT -->
+<section class="panel prose" role="tabpanel" id="panel-about" aria-labelledby="tab-about" hidden>
+  <section class="card">
+    <h2>What SIGNOVA is</h2>
+    <p><strong>Research prototype. Shows ASL handshapes only. Not a translator or a replacement for interpreters.</strong></p>
+    <p>SIGNOVA explores whether AI can leave the screen and communicate through physical motion:
+      <em>speech → AI → sign representation → robotic motion</em>. A person speaks, the laptop turns speech into text,
+      a gloss engine picks signs the hand can physically make, and an ESP32 moves the servos.</p>
+    <h2>What it cannot do</h2>
+    <ul>
+      <li>ASL uses the hands, arms, head, shoulders, torso and face. This prototype has one hand and no arm, so it shows <strong>handshapes only</strong>: no facial grammar, no movement through space, no pointing (pronouns are skipped).</li>
+      <li>Without a finger-spread joint, U and V look the same and 4 and B share a handshape.</li>
+      <li>All poses are drafts until a fluent signer validates them. Results from signer sessions are reported honestly, including negative feedback.</li>
+      <li>Communication is one-way. It does not understand signing.</li>
+    </ul>
+    <h2>Responsible AI</h2>
+    <ul>
+      <li>The AI can only output signs that are in the library: the sign IDs are an <code>enum</code> in the response schema, and a validator rejects anything else.</li>
+      <li>Audio is processed in memory and not saved unless "Save recordings for testing" is ticked. The header shows which speech engine and whether Claude (cloud, Anthropic API) is in use.</li>
+      <li>Evaluation data stores no names unless a participant label is typed on purpose; CSV files stay on this laptop.</li>
+    </ul>
+    <h2>Credits</h2>
+    <p>Speech: faster-whisper (MIT) and Vosk (Apache-2.0). 3D: three.js (MIT). Fingerspelling reference: Dr. Bill Vicars, lifeprint.com.</p>
+  </section>
+</section>
+</main>
+
+<div class="toasts" id="toasts" aria-live="assertive"></div>
+<script type="module" src="app.js"></script>
+</body>
+</html>
