@@ -26,7 +26,7 @@ def test_case_insensitive_ids(library: Library) -> None:
 
 
 def test_unknown_id_rejected(library: Library) -> None:
-    items, rejected = validate_items([{"type": "sign", "id": "HELLO", "word": "hello"}], library)
+    items, rejected = validate_items([{"type": "sign", "id": "THANKS", "word": "thanks"}], library)
     assert rejected == 1
     assert items[0].type == "skip"
     assert items[0].reason and items[0].reason.startswith(REJECTED)

@@ -37,8 +37,8 @@ def test_code_is_so_cool_details(library: Library) -> None:
 
 
 def test_skip_reasons(library: Library) -> None:
-    items = {i.word: i for i in rule_gloss("hello you disclosable 10 b2b", library).items}
-    assert "H" in (items["hello"].reason or "")
+    items = {i.word: i for i in rule_gloss("hat you disclosable 10 b2b", library).items}
+    assert "H" in (items["hat"].reason or "")
     assert items["you"].reason == "pointing sign needs arm movement"
     assert "too long" in (items["disclosable"].reason or "")
     assert "number" in (items["10"].reason or "")

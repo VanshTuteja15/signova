@@ -77,6 +77,18 @@ signs:
     frames:
       - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 1.0, ring: 1.0, pinky: 0.0, wrist: 0.5}
         hold_ms: 800
+  HELLO:
+    kind: word
+    tier: 2
+    english: ["hello", "hi", "hey"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real ASL HELLO is a flat-hand salute moving out from the forehead (arm movement). This hand has no arm, so it shows the flat B handshape with an outward wrist turn."
+    frames:
+      - pose: {thumb: 0.8, thumb_rot: 0.95, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 250
+      - pose: {thumb: 0.8, thumb_rot: 0.95, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.85}
+        hold_ms: 600
 
   # ---------------------------------------------------------------- letters (tier 1)
   A:

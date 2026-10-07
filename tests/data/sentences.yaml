@@ -36,7 +36,8 @@
 - {text: "Are you a fool?", gloss: ["-are", "?you", "-a", "FS:FOOL"]}
 - {text: "My dad is ill", gloss: ["?my", "FS:DAD", "-is", "FS:ILL"]}
 - {text: "Our ideas were sold", gloss: ["?our", "FS:IDEAS", "-were", "FS:SOLD"]}
-- {text: "Hello", gloss: ["?hello"]}
+- {text: "Hello", gloss: ["HELLO"]}
+- {text: "Hi, I love you", gloss: ["HELLO", "ILY"]}
 - {text: "Lisa is so wise", gloss: ["FS:LISA", "-is", "FS:SO", "FS:WISE"]}
 - {text: "Disclosable", gloss: ["?disclosable"]}
 - {text: "Jade is five", gloss: ["FS:JADE", "-is", "5"]}

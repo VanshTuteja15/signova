@@ -53,7 +53,7 @@ GOOD = {
         {"type": "sign", "id": "ily", "word": "I love you", "reason": ""},
         {"type": "fs", "id": "", "word": "code", "reason": ""},
         {"type": "drop", "id": "", "word": "is", "reason": ""},
-        {"type": "sign", "id": "HELLO", "word": "hello", "reason": ""},
+        {"type": "sign", "id": "THANKS", "word": "thanks", "reason": ""},
     ],
     "note": "Topic first.",
 }
@@ -62,10 +62,10 @@ GOOD = {
 async def test_claude_success_and_validation(library: Library) -> None:
     client = FakeClient(result=reply(GOOD))
     svc = GlossService(library, claude_client=client)
-    result = await svc.gloss("I love you, code is hello", "claude")
+    result = await svc.gloss("I love you, code is thanks", "claude")
     assert result.engine == "claude"
     assert result.fallback is False
-    assert result.short() == ["ILY", "FS:CODE", "-is", "?hello"]
+    assert result.short() == ["ILY", "FS:CODE", "-is", "?thanks"]
     assert result.rejected == 1
     assert "Topic first." in result.note and "rejected 1 item" in result.note
     assert result.model == "claude-haiku-4-5"
@@ -78,7 +78,7 @@ async def test_claude_success_and_validation(library: Library) -> None:
     assert "ILY" in id_enum and "" in id_enum
     assert "U" not in id_enum and "V" not in id_enum  # unavailable on this hand
     assert "ILY" in call["system"]
-    assert call["messages"][0]["content"] == "Sentence: I love you, code is hello"
+    assert call["messages"][0]["content"] == "Sentence: I love you, code is thanks"
 
 
 @pytest.mark.parametrize(
