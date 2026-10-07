@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import Any
 
 from ..library import Library
+from ..vocabulary import Vocabulary
 from .vosk_stt import VoskSTT
 from .whisper_stt import WhisperSTT
 
@@ -24,9 +25,13 @@ class SpeechManager:
         models_dir: Path,
         whisper_model: str | None = None,
         on_status: Callable[[str], None] | None = None,
+        vocabulary: Vocabulary | None = None,
     ) -> None:
+        self.vocabulary = vocabulary or Vocabulary()
         self.whisper = WhisperSTT(whisper_model, download_root=models_dir / "whisper", on_status=on_status)
-        self.vosk = VoskSTT(library, models_dir)
+        self.vosk = VoskSTT(
+            library, models_dir, extra_words=lambda: self.vocabulary.names + self.vocabulary.words
+        )
 
     def status(self) -> dict[str, Any]:
         return {"whisper": self.whisper.status(), "vosk": self.vosk.status()}
@@ -34,7 +39,9 @@ class SpeechManager:
     async def transcribe(self, audio: bytes, engine: str = "whisper") -> tuple[str, float]:
         if engine not in ENGINES:
             raise ValueError(f"unknown speech engine {engine!r} (use whisper or vosk)")
-        stt = self.whisper if engine == "whisper" else self.vosk
         t0 = time.perf_counter()
-        text = await asyncio.to_thread(stt.transcribe, audio)
+        if engine == "whisper":
+            text = await asyncio.to_thread(self.whisper.transcribe, audio, self.vocabulary.hotwords())
+        else:
+            text = await asyncio.to_thread(self.vosk.transcribe, audio)
         return text, round((time.perf_counter() - t0) * 1000, 1)

@@ -13,6 +13,8 @@
 # frames (one or more poses with optional hold_ms / move_ms).
 #
 # Note: 4 and B share a handshape on this hand because there is no finger-spread joint.
+# Many tier-2 signs are APPROXIMATIONS: real ASL uses arm movement, body location or two hands,
+# which this one-handed robot can't do. Their notes say what the real sign looks like.
 
 version: 1
 
@@ -204,7 +206,7 @@ signs:
   "NO":
     kind: word
     tier: 2
-    english: ["no", "nope"]
+    english: ["no", "nope", "nah"]
     requires: [thumb, thumb_rot, index, middle, ring, pinky]
     validated_by_signer: false
     notes: "Index and middle snap down onto the thumb, twice"
@@ -233,19 +235,693 @@ signs:
         hold_ms: 300
   U:
     kind: letter
-    tier: 3
+    tier: 2
     english: []
-    requires: [thumb, thumb_rot, index, middle, ring, pinky, spread_index_middle]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
     validated_by_signer: false
-    notes: "Index and middle up and together. Needs a spread joint to differ from V"
+    notes: "Index and middle up and together. On a hand without a spread joint, U and V look the same"
     frames:
       - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5, spread_index_middle: 0.0}
   V:
     kind: letter
-    tier: 3
+    tier: 2
     english: []
-    requires: [thumb, thumb_rot, index, middle, ring, pinky, spread_index_middle]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
     validated_by_signer: false
-    notes: "Index and middle up and spread apart"
+    notes: "APPROXIMATION. Index and middle up and spread apart. Uses the spread joint when the hand has one; otherwise it looks the same as U"
     frames:
       - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5, spread_index_middle: 1.0}
+
+  # ------------------------------------------- letters completing A-Z (approximations)
+  G:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real G: index and thumb point sideways. Shown with the hand turned edge-on."
+    frames:
+      - pose: {thumb: 0.2, thumb_rot: 0.2, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.9}
+  H:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real H: index and middle point sideways. Shown with the hand turned edge-on."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.9}
+  K:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Index and middle up, thumb up between them. Without a spread joint it is close to U."
+    frames:
+      - pose: {thumb: 0.3, thumb_rot: 0.5, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5, spread_index_middle: 0.6}
+  M:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Thumb tucked under three folded fingers."
+    frames:
+      - pose: {thumb: 0.9, thumb_rot: 1.0, index: 0.8, middle: 0.8, ring: 0.8, pinky: 1.0, wrist: 0.5}
+  "N":
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Thumb tucked under two folded fingers. Differs from M only in the ring finger."
+    frames:
+      - pose: {thumb: 0.9, thumb_rot: 1.0, index: 0.8, middle: 0.8, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  P:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real P is K pointing down (needs wrist bend). Shown as K turned edge-on."
+    frames:
+      - pose: {thumb: 0.3, thumb_rot: 0.5, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.85, spread_index_middle: 0.6}
+  Q:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real Q is G pointing down (needs wrist bend). Shown as G turned the other way."
+    frames:
+      - pose: {thumb: 0.15, thumb_rot: 0.3, index: 0.2, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.15}
+  R:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real R crosses index and middle. This hand can't cross fingers, so it looks like U."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.12, ring: 1.0, pinky: 1.0, wrist: 0.55}
+  T:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Thumb tucked between index and middle in a fist."
+    frames:
+      - pose: {thumb: 0.6, thumb_rot: 0.7, index: 0.9, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  X:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Index hooked, other fingers in a fist."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.5, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+  Z:
+    kind: letter
+    tier: 2
+    english: []
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Index traces a Z in the air. Shown as the index up with the wrist turning back and forth."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.35}
+        hold_ms: 200
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.65}
+        hold_ms: 200
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.35}
+        hold_ms: 200
+
+  # ------------------------------------------------------------ numbers 0 and 6-10
+  "0":
+    kind: number
+    tier: 2
+    english: ["zero", "0"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Same O shape as the letter O."
+    frames:
+      - pose: {thumb: 0.5, thumb_rot: 0.7, index: 0.62, middle: 0.62, ring: 0.62, pinky: 0.62, wrist: 0.5}
+  "6":
+    kind: number
+    tier: 2
+    english: ["six", "6"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Thumb touches the pinky, other three fingers up."
+    frames:
+      - pose: {thumb: 0.6, thumb_rot: 0.85, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.7, wrist: 0.5}
+  "7":
+    kind: number
+    tier: 2
+    english: ["seven", "7"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Thumb touches the ring finger."
+    frames:
+      - pose: {thumb: 0.6, thumb_rot: 0.8, index: 0.0, middle: 0.0, ring: 0.7, pinky: 0.0, wrist: 0.5}
+  "8":
+    kind: number
+    tier: 2
+    english: ["eight", "8"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Thumb touches the middle finger."
+    frames:
+      - pose: {thumb: 0.55, thumb_rot: 0.75, index: 0.0, middle: 0.7, ring: 0.0, pinky: 0.0, wrist: 0.5}
+  "9":
+    kind: number
+    tier: 2
+    english: ["nine", "9"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Thumb touches the index (same handshape as F)."
+    frames:
+      - pose: {thumb: 0.55, thumb_rot: 0.75, index: 0.72, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+  "10":
+    kind: number
+    tier: 2
+    english: ["ten", "10"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "Thumb up in a fist, shaken with a small wrist twist."
+    frames:
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.4}
+        hold_ms: 200
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.6}
+        hold_ms: 200
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.4}
+        hold_ms: 200
+
+  # ------------------------------------------------- everyday words (approximations)
+  # Most real ASL words use arm movement, location on the body or two hands. These keep the
+  # handshape and replace the movement with finger or wrist motion. Notes say what the real sign is.
+  BYE:
+    kind: word
+    tier: 2
+    english: ["bye", "goodbye", "good bye", "bye bye", "see you", "see you later", "see ya"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Open hand, fingers fold down and up (a wave). Close to real ASL BYE."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.1, thumb_rot: 0.1, index: 0.6, middle: 0.6, ring: 0.6, pinky: 0.6, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.1, thumb_rot: 0.1, index: 0.6, middle: 0.6, ring: 0.6, pinky: 0.6, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 250
+  THANKS:
+    kind: word
+    tier: 2
+    english: ["thank you", "thanks", "thank you so much", "thank you very much", "thanks a lot", "thank u"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real THANK-YOU: flat hand moves forward from the chin. Shown as a flat hand turning outward."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 200
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.85}
+        hold_ms: 500
+  PLEASE:
+    kind: word
+    tier: 2
+    english: ["please"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real PLEASE: flat hand circles on the chest. Shown as a flat hand rocking at the wrist."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.6}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.6}
+        hold_ms: 250
+  SORRY:
+    kind: word
+    tier: 2
+    english: ["sorry", "i am sorry", "so sorry", "my apologies", "apologies"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real SORRY: A-hand (fist) circles on the chest. Shown as a fist rocking at the wrist."
+    frames:
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.6}
+        hold_ms: 150
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.6}
+        hold_ms: 250
+  "YES":
+    kind: word
+    tier: 2
+    english: ["yes", "yeah", "yep", "yup"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real YES: a fist nods at the wrist. This hand has no wrist bend, so the fist rocks side to side."
+    frames:
+      - pose: {thumb: 0.75, thumb_rot: 1.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.42, wrist_flex: 0.2}
+        hold_ms: 150
+      - pose: {thumb: 0.75, thumb_rot: 1.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.58, wrist_flex: 0.8}
+        hold_ms: 150
+      - pose: {thumb: 0.75, thumb_rot: 1.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.42, wrist_flex: 0.2}
+        hold_ms: 150
+      - pose: {thumb: 0.75, thumb_rot: 1.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5, wrist_flex: 0.5}
+        hold_ms: 250
+  OK:
+    kind: word
+    tier: 2
+    english: ["ok", "okay", "alright", "all right"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Fingerspelled O-K, which is how ASL signs OK."
+    frames:
+      - pose: {thumb: 0.5, thumb_rot: 0.7, index: 0.62, middle: 0.62, ring: 0.62, pinky: 0.62, wrist: 0.5}
+        hold_ms: 350
+      - pose: {thumb: 0.3, thumb_rot: 0.5, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.5, spread_index_middle: 0.6}
+        hold_ms: 450
+  GOOD:
+    kind: word
+    tier: 2
+    english: ["good"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real GOOD: flat hand moves down from the chin. Shown as a flat hand turning outward."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.55}
+        hold_ms: 200
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.2}
+        hold_ms: 450
+  FINE:
+    kind: word
+    tier: 2
+    english: ["fine", "i am fine", "i am good"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real FINE: open hand, thumb taps the chest. Shown as an open hand with the thumb tapping."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.2, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.2, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 250
+  BAD:
+    kind: word
+    tier: 2
+    english: ["bad"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real BAD: flat hand from the chin flips down. Shown as a flat hand turning the other way."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 200
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.9}
+        hold_ms: 450
+  NAME:
+    kind: word
+    tier: 2
+    english: ["name", "my name is", "my name"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real NAME: two H-hands tap together. Shown as one H-hand tapping its fingers."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.75}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.25, middle: 0.25, ring: 1.0, pinky: 1.0, wrist: 0.75}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 0.0, ring: 1.0, pinky: 1.0, wrist: 0.75}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.25, middle: 0.25, ring: 1.0, pinky: 1.0, wrist: 0.75}
+        hold_ms: 250
+  NICE:
+    kind: word
+    tier: 2
+    english: ["nice", "pleased"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real NICE: flat hand slides across the other palm. Shown as a flat hand sliding by a wrist turn."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.35}
+        hold_ms: 200
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.7}
+        hold_ms: 400
+  MEET:
+    kind: word
+    tier: 2
+    english: ["meet", "meeting"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real MEET: two index fingers come together. Shown as one index finger turning in."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.3}
+        hold_ms: 200
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.7}
+        hold_ms: 400
+  HOW:
+    kind: word
+    tier: 2
+    english: ["how", "how are you"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real HOW: two bent hands roll forward. Shown as a bent hand rolling at the wrist."
+    frames:
+      - pose: {thumb: 0.4, thumb_rot: 0.35, index: 0.5, middle: 0.5, ring: 0.5, pinky: 0.5, wrist: 0.3}
+        hold_ms: 200
+      - pose: {thumb: 0.4, thumb_rot: 0.35, index: 0.5, middle: 0.5, ring: 0.5, pinky: 0.5, wrist: 0.75}
+        hold_ms: 450
+  WHAT:
+    kind: word
+    tier: 2
+    english: ["what"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real WHAT: open hands, palms up, shake slightly. Shown as an open hand shaking."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.6}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.6}
+        hold_ms: 250
+  WHERE:
+    kind: word
+    tier: 2
+    english: ["where"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "Index finger wags side to side. Close to real ASL WHERE."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.35}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.65}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.35}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.65}
+        hold_ms: 250
+  WHO:
+    kind: word
+    tier: 2
+    english: ["who"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real WHO: thumb on the chin, index bends. Shown as an L-hand with the index bending."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.45, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.45, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 250
+  WHY:
+    kind: word
+    tier: 2
+    english: ["why"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real WHY: hand at the forehead changes to a Y. Shown as an open hand closing to Y."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 200
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 450
+  WHEN:
+    kind: word
+    tier: 2
+    english: ["when"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real WHEN: index circles and lands on the other index. Shown as an index finger circling at the wrist."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.35}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.65}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 300
+  HELP:
+    kind: word
+    tier: 2
+    english: ["help", "help me", "can you help me"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real HELP: thumbs-up fist lifted by the other palm. Shown as a thumbs-up fist turning up."
+    frames:
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 200
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.75}
+        hold_ms: 450
+  WAIT:
+    kind: word
+    tier: 2
+    english: ["wait", "hold on", "one moment", "one second", "just a second", "just a moment", "wait a second", "wait one second", "wait a minute", "wait a moment"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Open hand with fingers wiggling. Close to real ASL WAIT (which uses two hands)."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.35, middle: 0.0, ring: 0.35, pinky: 0.0, wrist: 0.5}
+        hold_ms: 120
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.35, ring: 0.0, pinky: 0.35, wrist: 0.5}
+        hold_ms: 120
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.35, middle: 0.0, ring: 0.35, pinky: 0.0, wrist: 0.5}
+        hold_ms: 120
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.35, ring: 0.0, pinky: 0.35, wrist: 0.5}
+        hold_ms: 200
+  STOP:
+    kind: word
+    tier: 2
+    english: ["stop"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real STOP: flat hand chops down onto the other palm. Shown as a flat hand turning sharply."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.15}
+        hold_ms: 450
+  FINISH:
+    kind: word
+    tier: 2
+    english: ["finish", "finished", "done", "all done", "i am done"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real FINISH: open hands flip outward. Shown as an open hand flipping at the wrist."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.9}
+        hold_ms: 300
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 200
+  UNDERSTAND:
+    kind: word
+    tier: 2
+    english: ["understand", "i understand", "got it", "i get it"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Fist near the forehead, index flicks up. The handshape change matches real ASL UNDERSTAND."
+    frames:
+      - pose: {thumb: 0.75, thumb_rot: 1.0, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 250
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 450
+  NOT:
+    kind: word
+    tier: 2
+    english: ["not", "do not", "does not", "did not"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real NOT: thumb of an A-hand flicks forward from under the chin. Shown as a thumbs-up fist turning out."
+    frames:
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.05, thumb_rot: 0.1, index: 1.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.8}
+        hold_ms: 400
+  WATER:
+    kind: word
+    tier: 2
+    english: ["water"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "W-hand taps the chin. Shown as the W-hand tapping its fingers."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 0.0, middle: 0.0, ring: 0.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 0.25, middle: 0.25, ring: 0.25, pinky: 1.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 0.0, middle: 0.0, ring: 0.0, pinky: 1.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.7, thumb_rot: 0.95, index: 0.25, middle: 0.25, ring: 0.25, pinky: 1.0, wrist: 0.5}
+        hold_ms: 250
+  EAT:
+    kind: word
+    tier: 2
+    english: ["eat", "food", "eating"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Flat-O hand taps the mouth. Shown as the flat-O hand tapping."
+    frames:
+      - pose: {thumb: 0.5, thumb_rot: 0.65, index: 0.45, middle: 0.45, ring: 0.45, pinky: 0.45, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.6, thumb_rot: 0.75, index: 0.6, middle: 0.6, ring: 0.6, pinky: 0.6, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.5, thumb_rot: 0.65, index: 0.45, middle: 0.45, ring: 0.45, pinky: 0.45, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.6, thumb_rot: 0.75, index: 0.6, middle: 0.6, ring: 0.6, pinky: 0.6, wrist: 0.5}
+        hold_ms: 250
+  DRINK:
+    kind: word
+    tier: 2
+    english: ["drink", "drinking"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real DRINK: C-hand tips toward the mouth like a cup. Shown as a C-hand tipping at the wrist."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.45, index: 0.45, middle: 0.45, ring: 0.45, pinky: 0.45, wrist: 0.5}
+        hold_ms: 200
+      - pose: {thumb: 0.35, thumb_rot: 0.45, index: 0.45, middle: 0.45, ring: 0.45, pinky: 0.45, wrist: 0.8}
+        hold_ms: 450
+  BATHROOM:
+    kind: word
+    tier: 2
+    english: ["bathroom", "toilet", "washroom", "restroom"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "T-hand shakes side to side. Close to real ASL BATHROOM."
+    frames:
+      - pose: {thumb: 0.6, thumb_rot: 0.7, index: 0.9, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.6, thumb_rot: 0.7, index: 0.9, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.6}
+        hold_ms: 150
+      - pose: {thumb: 0.6, thumb_rot: 0.7, index: 0.9, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.4}
+        hold_ms: 150
+      - pose: {thumb: 0.6, thumb_rot: 0.7, index: 0.9, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.6}
+        hold_ms: 250
+  MORE:
+    kind: word
+    tier: 2
+    english: ["more"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real MORE: two flat-O hands tap fingertips. Shown as one flat-O hand tapping."
+    frames:
+      - pose: {thumb: 0.5, thumb_rot: 0.65, index: 0.45, middle: 0.45, ring: 0.45, pinky: 0.45, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.5, thumb_rot: 0.7, index: 0.62, middle: 0.62, ring: 0.62, pinky: 0.62, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.5, thumb_rot: 0.65, index: 0.45, middle: 0.45, ring: 0.45, pinky: 0.45, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.5, thumb_rot: 0.7, index: 0.62, middle: 0.62, ring: 0.62, pinky: 0.62, wrist: 0.5}
+        hold_ms: 250
+  AGAIN:
+    kind: word
+    tier: 2
+    english: ["again", "repeat", "one more time"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real AGAIN: bent hand flips into the other palm. Shown as a bent hand flipping at the wrist."
+    frames:
+      - pose: {thumb: 0.4, thumb_rot: 0.35, index: 0.5, middle: 0.5, ring: 0.5, pinky: 0.5, wrist: 0.8}
+        hold_ms: 200
+      - pose: {thumb: 0.4, thumb_rot: 0.35, index: 0.5, middle: 0.5, ring: 0.5, pinky: 0.5, wrist: 0.35}
+        hold_ms: 450
+  FRIEND:
+    kind: word
+    tier: 2
+    english: ["friend", "friends"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real FRIEND: two hooked index fingers link, then swap. Shown as a hooked index turning over."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.5, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.3}
+        hold_ms: 250
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.5, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.7}
+        hold_ms: 450
+  LIKE:
+    kind: word
+    tier: 2
+    english: ["like", "i like"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "Open hand pulls away while middle finger and thumb close. The handshape change matches real ASL LIKE."
+    frames:
+      - pose: {thumb: 0.0, thumb_rot: 0.0, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 200
+      - pose: {thumb: 0.55, thumb_rot: 0.75, index: 0.0, middle: 0.7, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 450
+  WELCOME:
+    kind: word
+    tier: 2
+    english: ["welcome", "you are welcome"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real WELCOME: flat hand sweeps in toward the body. Shown as a flat hand turning in."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.85}
+        hold_ms: 200
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 450
+  "EXCUSE_ME":
+    kind: word
+    tier: 2
+    english: ["excuse me", "pardon", "pardon me"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real EXCUSE-ME: fingertips brush the other palm. Shown as fingertips flicking."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.35, middle: 0.35, ring: 0.35, pinky: 0.35, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.35, middle: 0.35, ring: 0.35, pinky: 0.35, wrist: 0.5}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.5}
+        hold_ms: 250
+  HAPPY:
+    kind: word
+    tier: 2
+    english: ["happy", "glad"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real HAPPY: flat hand brushes up the chest twice. Shown as a flat hand rocking upward."
+    frames:
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.45}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.7}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.45}
+        hold_ms: 150
+      - pose: {thumb: 0.35, thumb_rot: 0.3, index: 0.0, middle: 0.0, ring: 0.0, pinky: 0.0, wrist: 0.7}
+        hold_ms: 250
+  DEAF:
+    kind: word
+    tier: 2
+    english: ["deaf"]
+    requires: [thumb, thumb_rot, index, middle, ring, pinky, wrist]
+    validated_by_signer: false
+    notes: "APPROXIMATION. Real DEAF: index touches near the ear, then near the mouth. Shown as an index finger turning between two points."
+    frames:
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.3}
+        hold_ms: 250
+      - pose: {thumb: 0.7, thumb_rot: 0.9, index: 0.0, middle: 1.0, ring: 1.0, pinky: 1.0, wrist: 0.7}
+        hold_ms: 400
+

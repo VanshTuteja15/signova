@@ -88,7 +88,7 @@ class WhisperSTT:
             self.error = None
             self._say(f"Speech model {self.model_name} ready")
 
-    def transcribe(self, audio: bytes) -> str:
+    def transcribe(self, audio: bytes, hotwords: str | None = None) -> str:
         if not audio:
             return ""
         self.load()
@@ -101,5 +101,6 @@ class WhisperSTT:
             beam_size=self.beam_size,
             vad_filter=True,
             condition_on_previous_text=False,
+            hotwords=hotwords or None,  # names from config/vocabulary.yaml, e.g. "Vansh"
         )
         return " ".join(s.text.strip() for s in segments).strip()

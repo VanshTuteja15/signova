@@ -34,7 +34,10 @@ def vosk_installed() -> bool:
     return True
 
 
-def build_grammar(library: Library) -> list[str]:
+def build_grammar(library: Library, extra: list[str] | None = None) -> list[str]:
+    """Phrases Vosk may hear: library phrases, numbers, letters, everyday filler words, names."""
+    from ..gloss.rules import DROP_WORDS, POINTING_WORDS
+
     phrases: list[str] = []
     for sid in library.available_ids():
         for p in library.get(sid).english:
@@ -46,6 +49,15 @@ def build_grammar(library: Library) -> list[str]:
     for letter in sorted(library.letters):
         if letter.lower() not in phrases:
             phrases.append(letter.lower())
+    # Filler words and pronouns: not signed, but letting Vosk hear them stops it forcing
+    # "hi i am vansh" into the nearest library phrase.
+    for w in sorted(DROP_WORDS | POINTING_WORDS):
+        if w not in phrases:
+            phrases.append(w)
+    for term in extra or []:
+        t = " ".join(term.lower().split())
+        if t and t not in phrases:
+            phrases.append(t)
     phrases.append("[unk]")
     return phrases
 
@@ -70,8 +82,15 @@ def join_spelled_letters(text: str) -> str:
 
 
 class VoskSTT:
-    def __init__(self, library: Library, models_dir: Path, model_name: str = DEFAULT_MODEL) -> None:
+    def __init__(
+        self,
+        library: Library,
+        models_dir: Path,
+        model_name: str = DEFAULT_MODEL,
+        extra_words: Callable[[], list[str]] | None = None,
+    ) -> None:
         self.library = library
+        self.extra_words = extra_words
         self.models_dir = models_dir
         self.model_name = model_name
         self._model: Any = None
@@ -111,6 +130,14 @@ class VoskSTT:
             self._model = vosk.Model(str(self.model_path))
             self.error = None
 
+    def _extra(self) -> list[str]:
+        if self.extra_words is None:
+            return []
+        try:
+            return list(self.extra_words())
+        except Exception:
+            return []
+
     def transcribe(self, audio: bytes) -> str:
         if not audio:
             return ""
@@ -118,7 +145,9 @@ class VoskSTT:
         import vosk
 
         pcm = decode_to_pcm16k(audio)
-        rec = vosk.KaldiRecognizer(self._model, SAMPLE_RATE, json.dumps(build_grammar(self.library)))
+        rec = vosk.KaldiRecognizer(
+            self._model, SAMPLE_RATE, json.dumps(build_grammar(self.library, self._extra()))
+        )
         chunk = SAMPLE_RATE * 2  # 1 s of 16-bit audio
         for i in range(0, len(pcm), chunk):
             rec.AcceptWaveform(pcm[i : i + chunk])

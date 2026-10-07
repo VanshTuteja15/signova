@@ -5,8 +5,12 @@ Order of matching (per MASTER_PROMPT 7.1):
   2. single words, digits and number words found in the library's `english` lists
   3. words ASL doesn't sign are dropped (articles, forms of "be", "to", "of", "do")
   4. pronouns are skipped: a pointing sign needs arm movement this hand doesn't have
-  5. anything else is fingerspelled if every letter is an available letter sign and it is
-     at most 8 letters long; otherwise it is skipped with a reason naming the missing letters
+  5. numbers that aren't in the library are signed digit by digit (25 -> 2 5)
+  6. anything else is fingerspelled if every letter is an available letter sign and it is
+     at most 12 letters long; otherwise it is skipped with a reason naming the missing letters
+
+Contractions are expanded first ("I'm" -> "i am", "don't" -> "do not") so everyday speech
+from Whisper matches the library phrases.
 """
 
 from __future__ import annotations
@@ -22,7 +26,8 @@ DROP_WORDS = frozenset(
 POINTING_WORDS = frozenset(
     {"i", "me", "my", "you", "your", "he", "she", "we", "they", "him", "her", "them", "our"}
 )
-MAX_FINGERSPELL = 8
+MAX_FINGERSPELL = 12
+MAX_DIGITS = 4
 POINTING_REASON = "pointing sign needs arm movement"
 
 RULES_NOTE = (
@@ -30,6 +35,64 @@ RULES_NOTE = (
     "skipped pronouns (pointing needs an arm) and fingerspelled words the hand can spell. "
     "Word order is left as spoken."
 )
+
+
+CONTRACTIONS: dict[str, str] = {
+    "i'm": "i am",
+    "you're": "you are",
+    "we're": "we are",
+    "they're": "they are",
+    "he's": "he is",
+    "she's": "she is",
+    "it's": "it is",
+    "that's": "that is",
+    "what's": "what is",
+    "where's": "where is",
+    "who's": "who is",
+    "how's": "how is",
+    "there's": "there is",
+    "here's": "here is",
+    "let's": "let us",
+    "i'll": "i will",
+    "you'll": "you will",
+    "we'll": "we will",
+    "they'll": "they will",
+    "i've": "i have",
+    "you've": "you have",
+    "we've": "we have",
+    "they've": "they have",
+    "i'd": "i would",
+    "you'd": "you would",
+    "can't": "can not",
+    "cannot": "can not",
+    "won't": "will not",
+    "don't": "do not",
+    "doesn't": "does not",
+    "didn't": "did not",
+    "isn't": "is not",
+    "aren't": "are not",
+    "wasn't": "was not",
+    "weren't": "were not",
+    "haven't": "have not",
+    "hasn't": "has not",
+    "couldn't": "could not",
+    "shouldn't": "should not",
+    "wouldn't": "would not",
+    "gonna": "going to",
+    "wanna": "want to",
+    "gotta": "got to",
+}
+_CONTRACTION_RE = re.compile(
+    r"(?<![a-z'])("
+    + "|".join(re.escape(k) for k in sorted(CONTRACTIONS, key=len, reverse=True))
+    + r")(?![a-z'])"
+)
+
+
+def expand_contractions(text: str) -> str:
+    """ "I'm Vansh" -> "i am Vansh". Lowercases; handles curly apostrophes."""
+    lowered = text.lower().replace("\u2019", "'")
+    return _CONTRACTION_RE.sub(lambda m: CONTRACTIONS[m.group(1)], lowered)
 
 
 def letters_of(word: str) -> str:
@@ -78,7 +141,7 @@ def join_spelled_letters(text: str) -> str:
 
 
 def rule_gloss(text: str, library: Library) -> GlossResult:
-    tokens = tokenize(join_spelled_letters(text))
+    tokens = tokenize(expand_contractions(join_spelled_letters(text)))
     phrases = library.phrase_map()
     longest = max((len(k) for k in phrases), default=1)
     letters = library.letters
@@ -96,7 +159,11 @@ def rule_gloss(text: str, library: Library) -> GlossResult:
             items.append(GlossItem(type="sign", id=phrases[match], word=" ".join(match)))
             i += len(match)
             continue
-        items.append(classify_word(tokens[i], library, letters))
+        word = tokens[i]
+        if word.isdigit() and len(word) <= MAX_DIGITS and all(library.available(d) for d in word):
+            items.extend(GlossItem(type="sign", id=d, word=word) for d in word)
+        else:
+            items.append(classify_word(word, library, letters))
         i += 1
 
     note = RULES_NOTE if items else "Nothing to sign."

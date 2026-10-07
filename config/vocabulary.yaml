@@ -1,0 +1,15 @@
+# Extra words that help SPEECH RECOGNITION hear names correctly.
+#
+# Names aren't signs: SIGNOVA fingerspells them letter by letter. But speech models often
+# mishear names ("Vansh" -> "Vance"), so list the names of people who will try the demo here.
+# - Whisper: these are passed as "hotwords", which nudges it toward these spellings.
+# - Vosk (demo-safe mode): names are added to its grammar if the model knows the word;
+#   otherwise spell the name out loud letter by letter ("V A N S H").
+# Edits apply on the next recording, no restart needed.
+
+names:
+  - Vansh
+  - SIGNOVA
+
+# Other words you expect people to say (optional).
+words: []
